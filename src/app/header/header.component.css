@@ -1,0 +1,35 @@
+main{
+    background-color: #C3ECEA;
+ height: fit-content;
+ position: sticky;
+ top: 25px;
+}
+
+.header-main{
+    width: 20rem;
+    height: 10vh;
+  
+
+}
+
+.col1:hover, .col2:hover, .col3:hover{
+    background-color: lightgrey;
+    cursor: pointer;
+}
+
+.col1{
+    border: thin solid gray;
+    width: 5rem;
+
+}
+
+.col2{
+    border: thin solid gray;
+    width: 5rem;
+
+}
+.col3{
+    border: thin solid gray;
+    width: 5rem;
+
+}

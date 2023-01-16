@@ -1,0 +1,25 @@
+main{
+    background-color: #C3ECEA;
+    height: fit-content;
+}
+
+.logo-main{
+    width: 50px;
+}
+
+.tl{
+    border: thin solid gray;
+    min-height: 100vh;
+    width: 40rem;
+    max-width: 80%;
+}
+
+.texto-nuevos-tweets{
+    color: green;
+}
+
+
+.texto-nuevos-tweets:hover{
+    color: rgb(1, 94, 1);
+    cursor: pointer;
+}

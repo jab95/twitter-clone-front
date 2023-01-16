@@ -1,0 +1,22 @@
+<main class="main-log d-flex justify-content-center align-items-center">
+    <div class="card shadow" style="width: 18rem;">
+        <div class="card-body text-center">
+            <h3 class="card-title mb-3">TWOTTER</h3>
+            <input #user type="text" class="form-control" id="user" placeholder="Usuario">
+            <input #pass type="password" class="form-control mt-2" id="pass" placeholder="Contraseña">
+            <ng-container *ngIf="errorLogin">
+                <p class="mt-2 text-start texto-error-registro">* Usuario o contraseña incorrectos.</p>
+            </ng-container>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col">
+                    <button type="button" (click)="acceder()"  class="btn btn-primary mt-3">Acceder</button>
+                   
+                </div>
+            </div>
+          
+            <p class="mt-2">¿No tienes usuario? <a href="javascript:void(0);" (click)="openDialog()">Registrate aqui</a></p>
+        </div>
+      </div>
+
+</main>
