@@ -1,3 +1,15 @@
 <main>
-    
+    <div class="d-flex flex-row">
+        <div class="div-img-tweet">
+            <img id="icon-tweet" src="./../../assets/logo-angular.png" alt="">
+        </div>
+        <div class="div-texto-tweet">
+            <p class="nombre-usuario-tweet">{{tweetActual.usuario}}<span> · <b>1h</b></span> </p>
+            <p class="texto-tweet-actual"> {{tweetActual.texto}} </p>
+            <ng-container *ngIf="imagenAdjuntada">
+                <img id="imagen-adjuntada-tweet" class="mb-3" src="../../assets/back-log.webp" alt="">
+            </ng-container>
+        </div>
+
+    </div>
 </main>

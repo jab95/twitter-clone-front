@@ -1,8 +1,10 @@
 export class Usuario {
-    usuario: string="";
-    pass: string="";
+    user: string;
+    pass: string;
+    fotoPerfil: string;
 
-    constructor(){
+    constructor() {
+
     }
 
-    }
+}

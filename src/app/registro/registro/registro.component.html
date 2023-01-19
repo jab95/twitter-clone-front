@@ -1,16 +1,17 @@
-<main class="main-registro text-center">
-<h1 mat-dialog-title>Registro</h1>
-<div mat-dialog-content>
-    
-    <input #user type="text" class="form-control" id="user" placeholder="Usuario">
-    <input #pass type="password" class="form-control mt-2" id="pass" placeholder="Contraseña">
-    <ng-container *ngIf="errorRegistro">
-        <p class="mt-4 text-start texto-error-registro">* La contraseña debe de tener al menos 6 caracteres incluida 1 mayuscula.</p>
-    </ng-container>
+<div class="main-registro text-center">
+    <h1 mat-dialog-title>Registro</h1>
+    <div mat-dialog-content>
 
+        <input #user type="text" class="form-control" id="user" placeholder="Usuario">
+        <input #pass type="password" class="form-control mt-2" id="pass" placeholder="Contraseña">
+        <ng-container *ngIf="errorRegistro">
+            <p class="mt-4 text-start texto-error-registro">* La contraseña debe de tener al menos 6 caracteres incluida
+                1 mayuscula.</p>
+        </ng-container>
+
+    </div>
+    <div mat-dialog-actions class="d-flex justify-content-between">
+        <button type="button" class="btn btn-primary mt-2 " mat-dialog-close>Cancelar</button>
+        <button type="button" class="btn btn-primary mt-2" (click)="hayErrores()">Registrar</button>
+    </div>
 </div>
-<div mat-dialog-actions class="d-flex justify-content-between">
-    <button type="button"  class="btn btn-primary mt-2 " mat-dialog-close>Cancelar</button>
-    <button type="button"  class="btn btn-primary mt-2" (click)="hayErrores()">Registrar</button>
-</div>
-</main>

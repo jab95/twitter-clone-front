@@ -7,13 +7,13 @@ import { Usuario } from '../models/Usuario';
 })
 export class RegistroService {
 
-  url:string = `http://localhost:3000`
+  url: string = `http://localhost:3000`
 
-  constructor(private http:HttpClient) { }
-  
+  constructor(private http: HttpClient) { }
 
-  public postUser(usuario:Usuario){
- 
-    return this.http.post(`${this.url}/usuario/add`,usuario)
+
+  public postUser(usuario: Usuario) {
+
+    return this.http.post(`${this.url}/usuario/add`, usuario)
   }
 }
