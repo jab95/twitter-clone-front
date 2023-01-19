@@ -40,7 +40,7 @@ export class RegistroComponent implements OnInit {
 
       this.usuario.pass = this.pass.nativeElement.value
       this.usuario.user = this.user.nativeElement.value
-
+      console.log(this.usuario.user)
       this.registroService.postUser(this.usuario).subscribe(
         {
           next: (data) => {
