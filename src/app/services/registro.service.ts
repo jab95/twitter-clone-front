@@ -13,6 +13,6 @@ export class RegistroService {
 
   public postUser(usuario: Usuario) {
 
-    return this.http.get(`${this.url}/usuario/get2`)
+    return this.http.post(`${this.url}/usuario/add`, usuario)
   }
 }

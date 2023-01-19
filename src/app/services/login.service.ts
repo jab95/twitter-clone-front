@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http'
 })
 export class LoginService {
 
-  _url: string = `https://twitter-clone-back-production.up.railway.app:3000`
+  _url: string = `https://twitter-clone-back-production.up.railway.app`
 
   constructor(private http: HttpClient) { }
 
