@@ -7,7 +7,7 @@ import { Tweet } from '../models/Tweet';
 })
 export class TweetsService {
 
-  url: string = `https://twitter-clone-back-production.up.railway.app`
+  url: string = `https://twitter-clone-back-production.up.railway.app:3000`
 
   constructor(private http: HttpClient) { }
 
