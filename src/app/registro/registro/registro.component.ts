@@ -44,6 +44,7 @@ export class RegistroComponent implements OnInit {
       this.registroService.postUser(this.usuario).subscribe(
         {
           next: (data) => {
+            console.log(data)
           },
           error: (err) => {
             console.log(err)
