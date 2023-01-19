@@ -7,7 +7,7 @@ import { Usuario } from '../models/Usuario';
 })
 export class RegistroService {
 
-  url: string = `http://localhost:3000`
+  url: string = `https://twitter-clone-back-production.up.railway.app`
 
   constructor(private http: HttpClient) { }
 

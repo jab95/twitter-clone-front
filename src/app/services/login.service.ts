@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient} from '@angular/common/http'
+import { HttpClient } from '@angular/common/http'
 
 
 @Injectable({
@@ -7,11 +7,11 @@ import { HttpClient} from '@angular/common/http'
 })
 export class LoginService {
 
-  private _url:string = `http://localhost:3000`
+  private _url: string = `https://twitter-clone-back-production.up.railway.app`
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-  public findUser(user:string,pass:string){
+  public findUser(user: string, pass: string) {
     return this.http.get(`${this._url}/usuario/get?user=${user}&pass=${pass}`)
 
   }
