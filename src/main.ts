@@ -10,21 +10,25 @@ import { environment } from './environments/environment';
 import { RegistroComponent } from './app/registro/registro/registro.component';
 import { RegistroService } from './app/services/registro.service';
 import { ToastrModule } from 'ngx-toastr';
+import { MainTlComponent } from './app/main-tl/main-tl.component';
+import { LoginComponent } from './app/login/login.component';
 
 if (environment.production) {
   enableProdMode();
 }
 
 export const ROUTES: Routes = [
-  { path: '', loadComponent: () => import('./app/login/login.component').then(mod => mod.LoginComponent) },
-  { path: 'home', runGuardsAndResolvers: 'always', loadComponent: () => import('./app/main-tl/main-tl.component').then(mod => mod.MainTlComponent) },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: MainTlComponent },
+  { path: 'login', component: LoginComponent },
+  { path: '**', component: LoginComponent },
 ];
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: LoginService, useClass: LoginService },
     { provide: RegistroService, useClass: RegistroService },
-    importProvidersFrom(HttpClientModule, BrowserAnimationsModule, ToastrModule.forRoot(), RouterModule.forRoot(ROUTES, { onSameUrlNavigation: 'reload' })),
+    importProvidersFrom(HttpClientModule, BrowserAnimationsModule, ToastrModule.forRoot(), RouterModule.forRoot(ROUTES)),
 
   ]
 
