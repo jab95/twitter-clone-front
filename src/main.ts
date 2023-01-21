@@ -1,7 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter, Route, Routes } from '@angular/router';
+import { provideRouter, Route, RouterModule, Routes } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app/app.component';
@@ -16,18 +16,16 @@ if (environment.production) {
 }
 
 export const ROUTES: Routes = [
-  {path: '', loadComponent: () => import('./app/login/login.component').then(mod => mod.LoginComponent)},
-  {path: 'home', loadComponent: () => import('./app/main-tl/main-tl.component').then(mod => mod.MainTlComponent)},
+  { path: '', loadComponent: () => import('./app/login/login.component').then(mod => mod.LoginComponent) },
+  { path: 'home', runGuardsAndResolvers: 'always', loadComponent: () => import('./app/main-tl/main-tl.component').then(mod => mod.MainTlComponent) },
 ];
 
-bootstrapApplication(AppComponent,{
-  providers:[
-    {provide: LoginService, useClass: LoginService},
-    {provide: RegistroService, useClass: RegistroService},
-    importProvidersFrom(HttpClientModule,BrowserAnimationsModule,ToastrModule.forRoot()),
-    provideRouter(
-      ROUTES
-    )
+bootstrapApplication(AppComponent, {
+  providers: [
+    { provide: LoginService, useClass: LoginService },
+    { provide: RegistroService, useClass: RegistroService },
+    importProvidersFrom(HttpClientModule, BrowserAnimationsModule, ToastrModule.forRoot(), RouterModule.forRoot(ROUTES, { onSameUrlNavigation: 'reload' })),
+
   ]
 
 })
