@@ -18,7 +18,7 @@ if (environment.production) {
 }
 
 export const ROUTES: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'home', component: MainTlComponent },
   { path: 'login', component: LoginComponent },
   { path: '**', component: LoginComponent },
