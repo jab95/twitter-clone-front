@@ -12,22 +12,24 @@ import { RegistroService } from './app/services/registro.service';
 import { ToastrModule } from 'ngx-toastr';
 import { MainTlComponent } from './app/main-tl/main-tl.component';
 import { LoginComponent } from './app/login/login.component';
+import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 
 if (environment.production) {
   enableProdMode();
 }
 
 export const ROUTES: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: MainTlComponent },
   { path: 'login', component: LoginComponent },
-  { path: '**', component: LoginComponent },
+  { path: '**', component: MainTlComponent },
 ];
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: LoginService, useClass: LoginService },
     { provide: RegistroService, useClass: RegistroService },
+    { provide: LocationStrategy, useClass: PathLocationStrategy },
     importProvidersFrom(HttpClientModule, BrowserAnimationsModule, ToastrModule.forRoot(), RouterModule.forRoot(ROUTES)),
 
   ]
