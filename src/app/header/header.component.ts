@@ -26,9 +26,9 @@ export class HeaderComponent implements OnInit {
 
   irArriba() {
 
-
     this._tweetsService.getTwets(this.datosService.contadorCargaTweets).subscribe({
       next: (tweets: any) => {
+
         this.datosService.maximosDocs = tweets.totalDocs
 
 
@@ -38,9 +38,16 @@ export class HeaderComponent implements OnInit {
           this._tweets = tweets
           this.newItemEvent.emit(tweets)
         }
+
+        if (tweets.totalDocs == 0) {
+          this.datosService.hayTweets = false
+          this.datosService.tweetsCargados = []
+          this.datosService.contadorCargaTweets = 1
+        }
+
       }, complete: () => {
 
-        if (this._tweets.docs.length != 0 && (this._tweets.docs.length % 4 == 0)) {
+        if (this._tweets && (this._tweets.docs.length != 0 && (this._tweets.docs.length % 4 == 0))) {
           this.datosService.contadorCargaTweets++
         }
 

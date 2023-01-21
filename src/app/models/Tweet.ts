@@ -7,6 +7,7 @@ export class Tweet {
     texto: string;
     foto: string;
     usuario: string;
+    _id: string;
 
     constructor() {
 

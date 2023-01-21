@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 import { Usuario } from '../models/Usuario';
 
 @Injectable({
@@ -7,7 +8,7 @@ import { Usuario } from '../models/Usuario';
 })
 export class RegistroService {
 
-  url: string = `https://twitter-clone-back-production.up.railway.app`
+  url: string = environment.url
   constructor(private http: HttpClient) { }
 
 

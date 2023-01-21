@@ -11,8 +11,9 @@ main {
 }
 
 #imagen-adjuntada-tweet {
-    width: 80% !important;
-
+    width: 50% !important;
+    cursor: pointer;
+    scale: calc(1);
 }
 
 .texto-tweet-actual {

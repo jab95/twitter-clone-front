@@ -3,3 +3,7 @@ mat-dialog-container {
     background-color: #C3ECEA !important;
 
 }
+
+#imagen-adjuntada-tweet {
+    width: 30% !important;
+}

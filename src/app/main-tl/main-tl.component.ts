@@ -28,8 +28,7 @@ export class MainTlComponent implements OnInit {
     this._cargarTweets()
     setInterval(() => {
       this._cargarTweets(true);
-      console.log("Delayed for 1 second.");
-    }, 3000)
+    }, 20000)
 
   }
 
@@ -82,9 +81,6 @@ export class MainTlComponent implements OnInit {
             this.datosService.hayTweetsPorVer = false;
 
           }
-
-
-
         }
 
         if (tweets.totalDocs == 0) {

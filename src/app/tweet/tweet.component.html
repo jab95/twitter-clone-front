@@ -7,7 +7,7 @@
             <p class="nombre-usuario-tweet">{{tweetActual.usuario}}<span> · <b>1h</b></span> </p>
             <p class="texto-tweet-actual"> {{tweetActual.texto}} </p>
             <ng-container *ngIf="imagenAdjuntada">
-                <img id="imagen-adjuntada-tweet" class="mb-3" src="../../assets/back-log.webp" alt="">
+                <img (click)="goToUrl()" id="imagen-adjuntada-tweet" class="mb-3" [src]="imagenTweet" alt="">
             </ng-container>
         </div>
 

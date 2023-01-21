@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 import { Tweet } from '../models/Tweet';
 
 @Injectable({
@@ -7,7 +8,7 @@ import { Tweet } from '../models/Tweet';
 })
 export class TweetsService {
 
-  url: string = `https://twitter-clone-back-production.up.railway.app`
+  url: string = environment.url
 
   constructor(private http: HttpClient) { }
 
@@ -15,6 +16,15 @@ export class TweetsService {
   public postTweet(tweet: Tweet) {
 
     return this.http.post(`${this.url}/tweet/add`, tweet)
+  }
+
+  public postImagenEnTweet(imagen: Blob, filename: string) {
+
+    const profileData = new FormData()
+
+    profileData.append("image", imagen, filename)
+
+    return this.http.post(`${this.url}/tweet/addImageTweet`, profileData)
   }
 
   public getTwets(contadorCargaTweets) {
@@ -25,4 +35,8 @@ export class TweetsService {
 
     return this.http.get(`${this.url}/tweet/getTweets`, { params })
   }
+
+
+
+
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ViewEncapsulation } from '@angular/core';
 import { DatosService } from '../services/datos.service';
 import { Tweet } from '../models/Tweet';
@@ -20,23 +20,61 @@ import { ElementRef } from '@angular/core';
 export class EscribirTweetComponent implements OnInit {
 
   private _tweet: Tweet = new Tweet()
-
-  constructor(private datosService: DatosService, private tweetsService: TweetsService) { }
+  public imagenAdjuntada: boolean = false
+  selectedFiles: any;
+  preview: string;
+  progress: number;
+  message: string;
+  currentFile: File;
+  constructor(private datosService: DatosService, private tweetsService: TweetsService, private dialogRef: MatDialogRef<EscribirTweetComponent>) { }
 
   @ViewChild("textoTweet", { static: true }) textoTeet: ElementRef
 
   ngOnInit(): void {
   }
 
-  twetear() {
+  adjuntarImagen(event: any) {
+    this.message = '';
+    this.preview = '';
+    this.progress = 0;
+    this.selectedFiles = event.target.files;
+
+    if (this.selectedFiles) {
+      const file: File | null = this.selectedFiles.item(0);
+
+      if (file) {
+        this.preview = '';
+        this.currentFile = file;
+
+        const reader = new FileReader();
+
+        reader.onload = (e: any) => {
+          this.preview = e.target.result;
+        };
+
+        reader.readAsDataURL(this.currentFile);
+        this.imagenAdjuntada = true
+
+      }
+    }
+
+  }
+
+  async twetear() {
     this._tweet.texto = this.textoTeet.nativeElement.value
-    this._tweet.foto = null
+    this._tweet.foto = this.currentFile.name
     this._tweet.usuario = localStorage.getItem("usuario")
 
-    this.tweetsService.postTweet(this._tweet).subscribe({
-      next: (tweet: Tweet) => {
-        this.datosService.tweetsCargados.push(tweet)
-      }, complete: () => {
+    await this.tweetsService.postTweet(this._tweet).subscribe({
+      next: async (tweet: Tweet) => {
+        this._tweet = tweet
+        await this.tweetsService.postImagenEnTweet(this.currentFile, tweet._id + "_" + this.currentFile.name.replace(new RegExp(" ", 'g'), "_")).subscribe({
+          next: async () => {
+            this.datosService.tweetsCargados.push(this._tweet)
+            this.datosService.hayTweets = true
+            this.dialogRef.close()
+          }
+        })
 
       }
     })

@@ -1,35 +1,44 @@
-main{
+main {
     background-color: #C3ECEA;
- height: fit-content;
- position: sticky;
- top: 25px;
+    height: fit-content;
+    position: sticky;
+    top: 25px;
+    z-index: 2;
+    background-color: transparent;
+
 }
 
-.header-main{
+.header-main {
     width: 20rem;
     height: 10vh;
-  
+
 
 }
 
-.col1:hover, .col2:hover, .col3:hover{
+.col1:hover,
+.col2:hover,
+.col3:hover {
     background-color: lightgrey;
     cursor: pointer;
 }
 
-.col1{
+.col1 {
     border: thin solid gray;
     width: 5rem;
+    background: #C3ECEA;
 
 }
 
-.col2{
+.col2 {
     border: thin solid gray;
     width: 5rem;
+    background: #C3ECEA;
 
 }
-.col3{
+
+.col3 {
     border: thin solid gray;
     width: 5rem;
+    background: #C3ECEA;
 
 }
