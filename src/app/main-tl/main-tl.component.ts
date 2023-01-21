@@ -10,6 +10,7 @@ import { DatosService } from '../services/datos.service';
 import { TweetsService } from '../services/tweets.service';
 import { ThisReceiver } from '@angular/compiler';
 import * as _ from "lodash"
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-main-tl',
   standalone: true,
@@ -19,12 +20,16 @@ import * as _ from "lodash"
 })
 export class MainTlComponent implements OnInit {
 
-  constructor(private dialog: MatDialog, public datosService: DatosService, private tweetsService: TweetsService) { }
+  constructor(private dialog: MatDialog, private router: Router, public datosService: DatosService, private tweetsService: TweetsService) { }
   public tweetsNuevos: number = 5
   public quedanTweetsPorVer: boolean = false;
   private _tweetsEnCarga: any;
 
   ngOnInit(): void {
+
+    if (_.isNil(localStorage.getItem("usuario"))) {
+      this.router.navigate(["/login"])
+    }
     this._cargarTweets()
     setInterval(() => {
       this._cargarTweets(true);
