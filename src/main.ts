@@ -18,11 +18,15 @@ if (environment.production) {
   enableProdMode();
 }
 
-export const ROUTES: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: 'home', component: MainTlComponent },
-  { path: 'login', component: LoginComponent },
-  { path: '**', component: MainTlComponent },
+
+export const ROUTES: Route[] = [
+  { path: '', loadComponent: () => import('./app/main-tl/main-tl.component').then(mod => mod.MainTlComponent) },
+  { path: 'home', loadComponent: () => import('./app/main-tl/main-tl.component').then(mod => mod.MainTlComponent) },
+  { path: 'login', loadComponent: () => import('./app/login/login.component').then(mod => mod.LoginComponent) },
+  { path: 'config', loadComponent: () => import('./app/config/config.component').then(mod => mod.ConfigComponent) },
+  { path: 'profile/:name', loadComponent: () => import('./app/profile/profile.component').then(mod => mod.ProfileComponent) },
+  { path: '**', loadComponent: () => import('./app/login/login.component').then(mod => mod.LoginComponent) },
+  // ...
 ];
 
 bootstrapApplication(AppComponent, {

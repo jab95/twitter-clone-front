@@ -36,6 +36,34 @@ export class TweetsService {
     return this.http.get(`${this.url}/tweet/getTweets`, { params })
   }
 
+  public getTweetsBeforeDate(contadorCargaTweets, fecha) {
+
+    const params = new HttpParams()
+      .set('page', contadorCargaTweets)
+      .set('fecha', fecha)
+
+
+    return this.http.get(`${this.url}/tweet/getTweetsBeforeDate`, { params })
+  }
+
+
+  public getTweetsAfterDate(contadorCargaTweets, fecha) {
+
+    const params = new HttpParams()
+      .set('page', contadorCargaTweets)
+      .set('fecha', fecha)
+
+
+    return this.http.get(`${this.url}/tweet/getTweetsAfterDate`, { params })
+  }
+
+  public getCountTweets() {
+
+
+    return this.http.get(`${this.url}/tweet/getCountTweets`)
+  }
+
+
 
 
 

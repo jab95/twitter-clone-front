@@ -1,7 +1,11 @@
-.main-log{
-   background-image: url("../../assets/back-log.webp");
+.main-log {
+    background-image: url("../../assets/back-log.webp");
 }
 
-.card{
+.card {
     background-color: transparent;
+}
+
+main {
+    height: 100vh;
 }

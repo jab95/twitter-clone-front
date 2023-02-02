@@ -1,5 +1,4 @@
 main {
-    background-color: #C3ECEA;
     height: fit-content;
     position: sticky;
     top: 25px;
@@ -8,8 +7,13 @@ main {
 
 }
 
+.logo-main {
+    width: 50px;
+}
+
+
 .header-main {
-    width: 20rem;
+    width: 26rem;
     height: 10vh;
 
 
@@ -17,7 +21,8 @@ main {
 
 .col1:hover,
 .col2:hover,
-.col3:hover {
+.col3:hover,
+.col4:hover {
     background-color: lightgrey;
     cursor: pointer;
 }
@@ -37,6 +42,13 @@ main {
 }
 
 .col3 {
+    border: thin solid gray;
+    width: 5rem;
+    background: #C3ECEA;
+
+}
+
+.col4 {
     border: thin solid gray;
     width: 5rem;
     background: #C3ECEA;

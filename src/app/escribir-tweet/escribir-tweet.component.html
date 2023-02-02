@@ -1,4 +1,4 @@
-<textarea #textoTweet class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+<textarea #textoTweet [(ngModel)]="texto" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
 <div *ngIf="preview" class="d-flex justify-content-center">
     <img id="imagen-adjuntada-tweet" class="mb-3 mt-3" [src]="preview" alt="">
 </div>
@@ -8,5 +8,6 @@
 </button>
 
 <div class="d-flex justify-content-end">
-    <button type="button" class="btn btn-primary mt-2 d-flex justify-content-end " (click)="twetear()">Twotear</button>
+    <button type="button" class="btn btn-primary mt-2 d-flex justify-content-end " [disabled]="!texto && !preview"
+        (click)="twetear()">Twotear</button>
 </div>

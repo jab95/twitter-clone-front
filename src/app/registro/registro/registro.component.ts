@@ -40,12 +40,12 @@ export class RegistroComponent implements OnInit {
 
       this.usuario.pass = this.pass.nativeElement.value
       this.usuario.user = this.user.nativeElement.value
+      this.usuario.fotoPerfil = "profile-default"
       this.registroService.postUser(this.usuario).subscribe(
         {
           next: (data) => {
           },
           error: (err) => {
-            console.log(err)
             this.toastr.success("Registrado", "Ha habido un error con el registro")
 
           },

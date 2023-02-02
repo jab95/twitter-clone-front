@@ -7,11 +7,13 @@ import { Tweet } from '../models/Tweet';
 import { TweetsService } from '../services/tweets.service';
 import { ViewChild } from '@angular/core';
 import { ElementRef } from '@angular/core';
+import * as _ from 'lodash';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-escribir-tweet',
   standalone: true,
-  imports: [CommonModule, MatDialogModule],
+  imports: [CommonModule, MatDialogModule, FormsModule],
   templateUrl: './escribir-tweet.component.html',
   styleUrls: ['./escribir-tweet.component.css'],
   encapsulation: ViewEncapsulation.None,
@@ -21,8 +23,9 @@ export class EscribirTweetComponent implements OnInit {
 
   private _tweet: Tweet = new Tweet()
   public imagenAdjuntada: boolean = false
+  public texto: string;
   selectedFiles: any;
-  preview: string;
+  preview: string = "";
   progress: number;
   message: string;
   currentFile: File;
@@ -60,22 +63,29 @@ export class EscribirTweetComponent implements OnInit {
 
   }
 
+  public noPuedeTweetear() {
+    return _.isEqual(this.textoTeet.nativeElement.value, "") && _.isEqual(this.preview, "")
+  }
+
   async twetear() {
     this._tweet.texto = this.textoTeet.nativeElement.value
-    this._tweet.foto = this.currentFile.name
+    this._tweet.foto = this.currentFile ? this.currentFile.name : ""
     this._tweet.usuario = localStorage.getItem("usuario")
 
     await this.tweetsService.postTweet(this._tweet).subscribe({
       next: async (tweet: Tweet) => {
         this._tweet = tweet
-        await this.tweetsService.postImagenEnTweet(this.currentFile, tweet._id + "_" + this.currentFile.name.replace(new RegExp(" ", 'g'), "_")).subscribe({
-          next: async () => {
-            this.datosService.tweetsCargados.push(this._tweet)
-            this.datosService.hayTweets = true
-            this.dialogRef.close()
-          }
-        })
+        if (this._tweet.foto) {
+          await this.tweetsService.postImagenEnTweet(this.currentFile, tweet._id + "_" + this.currentFile?.name?.replace(new RegExp(" ", 'g'), "_")).subscribe({
 
+          })
+        }
+
+      }, complete: async () => {
+        this.datosService.tweetsCargados.unshift(this._tweet)
+        this.datosService.hayTweets = true
+        this.datosService.fechaPosterior = this._tweet.fecha
+        await this.dialogRef.close("enviado")
       }
     })
   }

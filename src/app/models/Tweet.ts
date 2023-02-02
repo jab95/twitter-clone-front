@@ -8,6 +8,7 @@ export class Tweet {
     foto: string;
     usuario: string;
     _id: string;
+    fecha: Date;
 
     constructor() {
 

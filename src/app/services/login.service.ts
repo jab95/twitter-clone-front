@@ -16,4 +16,9 @@ export class LoginService {
     return this.http.get(`${this._url}/usuario/get?user=${user}&pass=${pass}`)
 
   }
+
+  public findUserByName(user: string) {
+    return this.http.get(`${this._url}/usuario/getByName?user=${user}`)
+
+  }
 }

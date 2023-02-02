@@ -5,10 +5,12 @@ body {
   min-height: 100vh;
   height: auto;
   margin: 0;
+  background-color: #C3ECEA;
+  width: 100vw;
 }
 
-main {
-  height: 100vh;
+body {
+  overflow-x: hidden;
 
 }
 

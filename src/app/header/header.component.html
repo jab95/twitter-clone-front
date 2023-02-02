@@ -1,10 +1,16 @@
 <main class="d-flex justify-content-center ">
+
     <div class="header-main mt-4   text-center d-flex justify-content-around">
-        <div class=" col1 d-flex justify-content-center align-items-center" (click)="irArriba()"><i
-                class="fa-solid fa-house fa-2xl"></i></div>
-        <div class=" col2 d-flex justify-content-center align-items-center"><i class="fa-solid fa-user fa-2xl"></i>
+        <div class=" col1 d-flex justify-content-center align-items-center" [routerLink]="['/home']" (click)="
+            irArriba()"><i class="fa-solid fa-house fa-2xl"></i></div>
+        <div class=" col2 d-flex justify-content-center align-items-center" [routerLink]="['/profile',id]"><i
+                class="fa-solid fa-user fa-2xl"></i>
         </div>
-        <div class=" col3 d-flex justify-content-center align-items-center"><i class="fa-solid fa-gear fa-2xl"></i>
+        <div class=" col3 d-flex justify-content-center align-items-center" [routerLink]="['/config']"><i
+                class="fa-solid fa-gear fa-2xl"></i>
+        </div>
+        <div class=" col4 d-flex justify-content-center align-items-center" (click)="logout()"
+            [routerLink]="['/login']"><i class="fa-solid fa-right-from-bracket fa-2xl"></i>
         </div>
     </div>
 </main>

@@ -1,10 +1,14 @@
 main {
     background-color: #C3ECEA;
-    height: fit-content;
 }
 
 .logo-main {
     width: 50px;
+}
+
+.card {
+    background: #ACD1CF !important;
+    width: fit-content !important;
 }
 
 .tl {
@@ -22,4 +26,11 @@ main {
 .texto-nuevos-tweets:hover {
     color: rgb(1, 94, 1);
     cursor: pointer;
+}
+
+#imagen-adjuntada-tweet {
+
+
+    width: 100px !important;
+    height: 100px !important;
 }
