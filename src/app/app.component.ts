@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { from } from 'rxjs';
-import { HeaderComponent } from './header/header.component';
-import { LoginComponent } from './login/login.component';
-import { MainTlComponent } from './main-tl/main-tl.component';
-import { RegistroComponent } from './registro/registro/registro.component';
+import { HeaderComponent } from './components/header/header.component';
+import { LoginComponent } from './components/login/login.component';
+import { MainTlComponent } from './components/main-tl/main-tl.component';
+import { RegistroComponent } from './components/registro/registro.component';
 
 @Component({
   standalone: true,

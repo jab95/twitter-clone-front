@@ -4,10 +4,18 @@ main {
     height: fit-content;
     border-top: thin solid gray;
     border-bottom: thin solid gray;
+    z-index: 10;
 }
 
 #icon-tweet {
-    width: 3rem;
+    z-index: 5;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 2px;
+    object-fit: cover;
+
 }
 
 #imagen-adjuntada-tweet {
@@ -34,4 +42,12 @@ main {
 
 .nombre-usuario-tweet {
     font-weight: bold;
+}
+
+#name-main-profile {
+    cursor: pointer;
+}
+
+#name-main-profile:hover {
+    text-decoration: underline;
 }

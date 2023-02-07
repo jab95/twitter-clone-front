@@ -1,0 +1,32 @@
+<main>
+    <div class="d-flex justify-content-center">
+        <img src="../../assets/logo-angular.png" class="logo-main mt-5" alt="">
+    </div>
+
+    <app-header></app-header>
+
+    <div class="profile mx-auto mt-5 text-center bg-info text-dark shadow-lg">
+        <div class="w-100 profile-header">
+            <img src="../../assets/back-log.webp" class="w-100 h-100" alt="">
+            <img [src]="fotoPerfil" alt="" class="img-profile ">
+        </div>
+        <p class="profile-username d-flex justify-content-start ">{{username}}</p>
+        <p class="profile-desc d-flex justify-content-start ">{{descripcion}}</p>
+        <div *ngIf="datosService.hayTweets; then thenBlock else elseBlock"></div>
+        <ng-template #thenBlock>
+            <div style="width: 100%;" (click)="cargarTweetsPosteriores(null)">
+                <h5 *ngIf="datosService.hayTweetsPorVerProfile" class="texto-nuevos-tweets text-center mt-2">Mostrar
+                    twoots nuevos</h5>
+                <app-tweet *ngFor=" let i of tweetsCargadosProfile" [tweetActual]="i"></app-tweet>
+            </div>
+        </ng-template>
+        <ng-template #elseBlock>
+            <h3 class="mt-5">No hay Twoots</h3>
+        </ng-template>
+    </div>
+    <div class="mt-2  d-flex justify-content-center">
+        <button type="button" (click)="cargarTweetsAnteriores()" class="btn rounded-pill btn-lg btn-primary mb-2">Cargar
+            anteriores...</button>
+    </div>
+
+</main>

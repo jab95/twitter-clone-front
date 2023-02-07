@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -6,6 +6,7 @@ import { ViewEncapsulation } from '@angular/core';
 import { RegistroService } from 'src/app/services/registro.service';
 import { ToastrService } from 'ngx-toastr';
 import { Usuario } from 'src/app/models/Usuario';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-registro',
@@ -16,7 +17,7 @@ import { Usuario } from 'src/app/models/Usuario';
   encapsulation: ViewEncapsulation.None,
 
 })
-export class RegistroComponent implements OnInit {
+export class RegistroComponent implements OnInit, OnDestroy {
 
   public errorRegistro: boolean = false
 
@@ -25,10 +26,16 @@ export class RegistroComponent implements OnInit {
 
   @ViewChild('pass', { static: true }) pass!: ElementRef;
   @ViewChild('user', { static: true }) user!: ElementRef;
+  private _postUserSubscriber: Subscription;
 
   constructor(private registroService: RegistroService, private toastr: ToastrService, private dialogRef: MatDialogRef<RegistroComponent>) { }
 
+  ngOnDestroy(): void {
+    this._postUserSubscriber?.unsubscribe()
+  }
+
   ngOnInit(): void {
+
   }
 
   hayErrores() {
@@ -41,7 +48,7 @@ export class RegistroComponent implements OnInit {
       this.usuario.pass = this.pass.nativeElement.value
       this.usuario.user = this.user.nativeElement.value
       this.usuario.fotoPerfil = "profile-default"
-      this.registroService.postUser(this.usuario).subscribe(
+      this._postUserSubscriber = this.registroService.postUser(this.usuario).subscribe(
         {
           next: (data) => {
           },

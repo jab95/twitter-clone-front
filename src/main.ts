@@ -7,12 +7,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app/app.component';
 import { LoginService } from './app/services/login.service';
 import { environment } from './environments/environment';
-import { RegistroComponent } from './app/registro/registro/registro.component';
+import { RegistroComponent } from './app/components/registro/registro.component';
 import { RegistroService } from './app/services/registro.service';
 import { ToastrModule } from 'ngx-toastr';
-import { MainTlComponent } from './app/main-tl/main-tl.component';
-import { LoginComponent } from './app/login/login.component';
+import { MainTlComponent } from './app/components/main-tl/main-tl.component';
+import { LoginComponent } from './app/components/login/login.component';
 import { HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { AuthService } from './app/auth/auth.service';
 
 if (environment.production) {
   enableProdMode();
@@ -20,12 +21,12 @@ if (environment.production) {
 
 
 export const ROUTES: Route[] = [
-  { path: '', loadComponent: () => import('./app/main-tl/main-tl.component').then(mod => mod.MainTlComponent) },
-  { path: 'home', loadComponent: () => import('./app/main-tl/main-tl.component').then(mod => mod.MainTlComponent) },
-  { path: 'login', loadComponent: () => import('./app/login/login.component').then(mod => mod.LoginComponent) },
-  { path: 'config', loadComponent: () => import('./app/config/config.component').then(mod => mod.ConfigComponent) },
-  { path: 'profile/:name', loadComponent: () => import('./app/profile/profile.component').then(mod => mod.ProfileComponent) },
-  { path: '**', loadComponent: () => import('./app/login/login.component').then(mod => mod.LoginComponent) },
+  { path: '', loadComponent: () => import('./app/components/main-tl/main-tl.component').then(mod => mod.MainTlComponent) },
+  { path: 'home', canActivate: [AuthService], loadComponent: () => import('./app/components/main-tl/main-tl.component').then(mod => mod.MainTlComponent) },
+  { path: 'login', loadComponent: () => import('./app/components/login/login.component').then(mod => mod.LoginComponent) },
+  { path: 'config', canActivate: [AuthService], loadComponent: () => import('./app/components/config/config.component').then(mod => mod.ConfigComponent) },
+  { path: 'profile/:usuario', canActivate: [AuthService], loadComponent: () => import('./app/components/profile/profile.component').then(mod => mod.ProfileComponent) },
+  { path: '**', loadComponent: () => import('./app/components/login/login.component').then(mod => mod.LoginComponent) },
   // ...
 ];
 
@@ -34,6 +35,7 @@ bootstrapApplication(AppComponent, {
     { provide: LoginService, useClass: LoginService },
     { provide: RegistroService, useClass: RegistroService },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: AuthService, useClass: AuthService },
     importProvidersFrom(HttpClientModule, BrowserAnimationsModule, ToastrModule.forRoot(), RouterModule.forRoot(ROUTES, { useHash: true })),
 
   ]

@@ -1,0 +1,45 @@
+main {
+    background-color: #C3ECEA;
+
+}
+
+.logo-main {
+    width: 50px;
+}
+
+.profile {
+
+    border: thin solid gray;
+    min-height: 50vh;
+    width: 40rem;
+    max-width: 80%;
+    position: relative;
+
+}
+
+.profile-header {
+    height: 150px;
+}
+
+.img-profile {
+    position: absolute;
+    top: 50px;
+    left: 35px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 2px;
+
+}
+
+.profile-username {
+    margin-left: 20px;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.profile-desc {
+    margin-left: 20px;
+    margin-top: 15px;
+}

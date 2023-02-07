@@ -18,6 +18,12 @@ export class ConfigService {
     return this.http.put(`${this.url}/usuario/changeUsername`, { oldValue: oldValue, newValue: newValue })
   }
 
+  public changeDescription(user: string, desc: string) {
+
+
+    return this.http.put(`${this.url}/usuario/changeDescription`, { user: user, descripcion: desc })
+  }
+
   public changeProfile(user: string, newValue: string) {
 
     return this.http.put(`${this.url}/usuario/changeProfile`, { user: user, newProfile: newValue })

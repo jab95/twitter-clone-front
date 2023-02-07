@@ -1,13 +1,12 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { LoginService } from '../services/login.service';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { LoginService } from '../../services/login.service';
 import { } from '@angular/common/http';
 import { CommonModule, NgIf } from '@angular/common';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { RegistroComponent } from '../registro/registro/registro.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
-import { from } from 'rxjs';
-import { DatosService } from '../services/datos.service';
+import { from, Subscription } from 'rxjs';
+import { DatosService } from '../../services/datos.service';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +21,7 @@ import { DatosService } from '../services/datos.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
 
   @ViewChild('pass', { static: true }) pass!: ElementRef;
@@ -30,8 +29,14 @@ export class LoginComponent implements OnInit {
 
   public errorLogin: boolean = false
 
+  private _loginSubscriber: Subscription;
+
 
   constructor(private login: LoginService, private dialog: MatDialog, private router: Router, private datosService: DatosService) { }
+
+  ngOnDestroy(): void {
+    this._loginSubscriber?.unsubscribe()
+  }
 
   ngOnInit(): void {
 
@@ -41,11 +46,12 @@ export class LoginComponent implements OnInit {
   acceder() {
 
 
-    this.login.findUser(this.user.nativeElement.value, this.pass.nativeElement.value).subscribe({
+    this._loginSubscriber = this.login.findUser(this.user.nativeElement.value, this.pass.nativeElement.value).subscribe({
       next: (data: any) => {
         if (data) {
           this.errorLogin = false
           localStorage.setItem("usuario", data.user)
+          this.datosService.profileUser = data.user
           this.router.navigate(['home'])
         } else {
           this.errorLogin = true
@@ -61,7 +67,7 @@ export class LoginComponent implements OnInit {
 
   async openDialog() {
     const { RegistroComponent } = await import(
-      '../registro/registro/registro.component'
+      '../registro/registro.component'
     );
     const dialogRef = this.dialog.open(RegistroComponent, { disableClose: true });
 

@@ -11,12 +11,16 @@ export class DatosService {
   contadorCargaTweets: number = 1;
   maximosDocs: number = 0;
   hayTweets: boolean = false;
-  hayTweetsPorVer: boolean = false;
+  hayTweetsPorVerMain: boolean = false;
+  hayTweetsPorVerProfile: boolean = false;
   tweetsCargados: Tweet[] = [];
   fechaPosterior: Date;
+  fechaPosteriorProfile: Date;
   fechaAnterior: Date;
+  fechaAnteriorProfile: Date;
   templateActual: string
-  usuarioActual: Usuario
+  profileUser: string = ""
+  estaEnMain: boolean = false
 
   constructor() {
 
@@ -30,12 +34,12 @@ export class DatosService {
 
     this.maximosDocs = 0
     this.hayTweets = false
-    this.hayTweetsPorVer = false
+    this.hayTweetsPorVerMain = false
     this.tweetsCargados = []
     this.fechaPosterior = null
     this.fechaAnterior = null
     this.templateActual = ""
-    this.usuarioActual = null
+    this.estaEnMain = false
 
   }
 

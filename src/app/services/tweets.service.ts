@@ -36,6 +36,16 @@ export class TweetsService {
     return this.http.get(`${this.url}/tweet/getTweets`, { params })
   }
 
+  public getTwetsByProfile(user, contadorCargaTweets) {
+
+    const params = new HttpParams()
+      .set('page', contadorCargaTweets)
+      .set('user', user)
+
+
+    return this.http.get(`${this.url}/tweet/getTweetsByProfile`, { params })
+  }
+
   public getTweetsBeforeDate(contadorCargaTweets, fecha) {
 
     const params = new HttpParams()
@@ -44,6 +54,17 @@ export class TweetsService {
 
 
     return this.http.get(`${this.url}/tweet/getTweetsBeforeDate`, { params })
+  }
+
+  public getTweetsBeforeDateByUser(contadorCargaTweets, fecha, user) {
+
+    const params = new HttpParams()
+      .set('page', contadorCargaTweets)
+      .set('fecha', fecha)
+      .set('user', user)
+
+
+    return this.http.get(`${this.url}/tweet/getTweetsBeforeDateByUser`, { params })
   }
 
 
@@ -56,6 +77,18 @@ export class TweetsService {
 
     return this.http.get(`${this.url}/tweet/getTweetsAfterDate`, { params })
   }
+
+  public getTweetsAfterDateByUser(contadorCargaTweets, fecha, user) {
+
+    const params = new HttpParams()
+      .set('page', contadorCargaTweets)
+      .set('fecha', fecha)
+      .set('user', user)
+
+
+    return this.http.get(`${this.url}/tweet/getTweetsAfterDateByUser`, { params })
+  }
+
 
   public getCountTweets() {
 

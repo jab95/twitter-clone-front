@@ -1,13 +1,13 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
-import { ConfigService } from '../services/config.service';
+import { ConfigService } from '../../services/config.service';
 import * as _ from "lodash"
-import { Usuario } from '../models/Usuario';
-import { DatosService } from '../services/datos.service';
-import { init, waitForInit } from '../directivas/init';
-import { LoginService } from '../services/login.service';
-import { lastValueFrom } from 'rxjs';
+import { Usuario } from '../../models/Usuario';
+import { DatosService } from '../../services/datos.service';
+import { init, waitForInit } from '../../directivas/init';
+import { LoginService } from '../../services/login.service';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -18,7 +18,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./config.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class ConfigComponent implements OnInit {
+export class ConfigComponent implements OnInit, OnDestroy {
 
   private _selectedFiles: any;
   preview: string = "";
@@ -26,7 +26,21 @@ export class ConfigComponent implements OnInit {
 
   @ViewChild("fileInput", { static: true }) private _fileinput: ElementRef
 
+  private _changeUserSubscriber: Subscription;
+  private _changeDescSubscriber: Subscription;
+  private _postProfileSubscriber: Subscription;
+  private _changeProfileSubscriber: Subscription;
+
   constructor(private configService: ConfigService, private userService: LoginService, private datosService: DatosService) { }
+
+
+  ngOnDestroy(): void {
+
+    this._changeDescSubscriber?.unsubscribe()
+    this._changeProfileSubscriber?.unsubscribe()
+    this._changeUserSubscriber?.unsubscribe()
+    this._postProfileSubscriber?.unsubscribe()
+  }
 
   @waitForInit
   ngOnInit(): void {
@@ -37,10 +51,27 @@ export class ConfigComponent implements OnInit {
   changeUsername(newValue) {
 
     if (newValue) {
-      this.configService.changeUsername(localStorage.getItem("usuario"), newValue).subscribe({
+      this._changeUserSubscriber = this.configService.changeUsername(localStorage.getItem("usuario"), newValue).subscribe({
 
         next: (val: Usuario) => {
           localStorage.setItem("usuario", val.user)
+        }, complete: () => {
+          console.log("terminado")
+        }, error: () => {
+          console.log("error")
+        }
+
+      })
+    }
+
+  }
+
+  changeDescription(newValue) {
+
+    if (newValue) {
+      this._changeDescSubscriber = this.configService.changeDescription(localStorage.getItem("usuario"), newValue).subscribe({
+
+        next: (val: Usuario) => {
         }, complete: () => {
           console.log("terminado")
         }, error: () => {
@@ -81,12 +112,12 @@ export class ConfigComponent implements OnInit {
   }
 
   async cambiaPerfil(file: File) {
-    await this.configService.postProfile(file, "profile-" + localStorage.getItem("usuario") + "." + file.type.split("/")[1]).subscribe({
+    this._postProfileSubscriber = await this.configService.postProfile(file, "profile-" + localStorage.getItem("usuario") + "." + file.type.split("/")[1]).subscribe({
       next: (e) => {
       }
     })
 
-    await this.configService.changeProfile(localStorage.getItem("usuario"), "profile-" + localStorage.getItem("usuario") + "." + file.type.split("/")[1]).subscribe({
+    this._changeProfileSubscriber = await this.configService.changeProfile(localStorage.getItem("usuario"), "profile-" + localStorage.getItem("usuario") + "." + file.type.split("/")[1]).subscribe({
 
       next: (val: Usuario) => {
         localStorage.setItem("usuario", val.user)

@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { HeaderComponent } from '../header/header.component';
+import { HeaderComponent } from '../../components/header/header.component';
 import { TweetComponent } from '../tweet/tweet.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Tweet } from '../models/Tweet';
-import { DatosService } from '../services/datos.service';
-import { TweetsService } from '../services/tweets.service';
+import { Tweet } from '../../models/Tweet';
+import { DatosService } from '../../services/datos.service';
+import { TweetsService } from '../../services/tweets.service';
 import * as _ from "lodash"
-import { Router } from '@angular/router';
+import { NavigationStart, Router } from '@angular/router';
+import { init, waitForInit } from '../../directivas/init';
+import { Observable, Subscriber, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-main-tl',
@@ -16,12 +18,28 @@ import { Router } from '@angular/router';
   templateUrl: './main-tl.component.html',
   styleUrls: ['./main-tl.component.css']
 })
-export class MainTlComponent implements OnInit {
+export class MainTlComponent implements OnInit, OnDestroy {
 
-  constructor(private dialog: MatDialog, private router: Router, public datosService: DatosService, private tweetsService: TweetsService) { }
+  private _interval = null
+  private _tweetsBeforeSubscribe: Subscription;
+  private _tweetsAfterSubscribe: Subscription;
+  private _tweetsSubscribe: Subscription;
+
+  constructor(private dialog: MatDialog, private router: Router, public datosService: DatosService, private tweetsService: TweetsService) {
+    this.datosService.estaEnMain = true
+
+    // this.router.events.subscribe((event: any) => {
+    //   if (event instanceof NavigationStart) {
+    //     // Show progress spinner or progress bar
+
+    //   }
+    // })
+
+  }
 
   private _tweetsAnteriores: any;
 
+  @waitForInit
   ngOnInit(): void {
 
     this.datosService.templateActual = "home"
@@ -29,13 +47,34 @@ export class MainTlComponent implements OnInit {
     if (_.isNil(localStorage.getItem("usuario"))) {
       this.router.navigate(["/login"])
     }
-    this.cargarTweets()
-    setInterval(() => {
+
+    this._interval = setInterval(() => {
       this.cargarTweetsPosteriores("intervalo");
     }, 20000)
 
   }
 
+  @init
+  async cargaTweetsBeforeInit() {
+    await this.cargarTweets()
+
+  }
+
+  ngOnDestroy(): void {
+
+    if (!_.isNil(this._interval)) {
+
+      clearInterval(this._interval)
+    }
+    this.datosService.estaEnMain = false
+
+    this._tweetsAfterSubscribe?.unsubscribe()
+    this._tweetsBeforeSubscribe?.unsubscribe()
+    this._tweetsSubscribe?.unsubscribe()
+
+
+
+  }
 
   cargaDatos($event: any) {
     this.datosService.tweetsCargados.unshift($event[0])
@@ -61,11 +100,12 @@ export class MainTlComponent implements OnInit {
   }
 
 
-  cargarTweets() {
+  async cargarTweets() {
 
-    this.tweetsService.getTwets(this.datosService.contadorCargaTweets).subscribe({
+
+
+    this._tweetsSubscribe = await this.tweetsService.getTwets(this.datosService.contadorCargaTweets).subscribe({
       next: (tweets: Tweet) => {
-
 
         if (this.datosService.tweetsCargados.length < tweets.totalDocs) {
 
@@ -74,7 +114,7 @@ export class MainTlComponent implements OnInit {
         } else {
 
 
-          this.datosService.hayTweetsPorVer = false;
+          this.datosService.hayTweetsPorVerMain = false;
 
         }
 
@@ -87,17 +127,11 @@ export class MainTlComponent implements OnInit {
         } else {
 
           this.datosService.hayTweets = true
-          this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados).fecha
+          this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados)?.fecha
 
         }
 
       }, complete: () => {
-
-
-        if (this.datosService.tweetsCargados.length != 0 && (this.datosService.tweetsCargados.length % 4 == 0)) {
-
-          this.datosService.contadorCargaTweets++
-        }
 
       }
     })
@@ -106,13 +140,13 @@ export class MainTlComponent implements OnInit {
   cargarTweetsAnteriores() {
 
 
-    this.datosService.fechaAnterior = _.last(this.datosService.tweetsCargados).fecha
+    this.datosService.fechaAnterior = _.last(this.datosService.tweetsCargados)?.fecha
 
-    this.tweetsService.getTweetsBeforeDate(this.datosService.contadorCargaTweets, this.datosService.fechaAnterior).subscribe({
+    this._tweetsBeforeSubscribe = this.tweetsService.getTweetsBeforeDate(this.datosService.contadorCargaTweets, this.datosService.fechaAnterior).subscribe({
       next: (tweets: any) => {
 
         if (tweets.length != 0) {
-          this.datosService.hayTweetsPorVer = false
+          this.datosService.hayTweetsPorVerMain = false
           this._tweetsAnteriores = tweets
         }
 
@@ -125,6 +159,7 @@ export class MainTlComponent implements OnInit {
       }, complete: () => {
 
         if (this._tweetsAnteriores && (this._tweetsAnteriores.length != 0 && (this._tweetsAnteriores.length % 4 == 0))) {
+
           this.datosService.contadorCargaTweets++
         }
 
@@ -136,17 +171,17 @@ export class MainTlComponent implements OnInit {
   }
   cargarTweetsPosteriores(intervalo?) {
     let posteriores
-    this.tweetsService.getTweetsAfterDate(this.datosService.contadorCargaTweets, this.datosService.fechaPosterior).subscribe({
+    this._tweetsAfterSubscribe = this.tweetsService.getTweetsAfterDate(this.datosService.contadorCargaTweets, this.datosService.fechaPosterior).subscribe({
       next: (tweets: any) => {
 
         if (tweets.length != 0) {
-          this.datosService.hayTweetsPorVer = true
+          this.datosService.hayTweetsPorVerMain = true
           posteriores = tweets
         }
 
 
 
-        if (intervalo == null && this.datosService.hayTweetsPorVer) {
+        if (intervalo == null && this.datosService.hayTweetsPorVerMain) {
 
 
 
@@ -158,7 +193,7 @@ export class MainTlComponent implements OnInit {
 
         for (const tweet of tweets) {
           if (this.datosService.tweetsCargados.includes(tweet)) {
-            this.datosService.hayTweetsPorVer = false
+            this.datosService.hayTweetsPorVerMain = false
           }
         }
 
@@ -171,10 +206,11 @@ export class MainTlComponent implements OnInit {
       }, complete: () => {
 
         if (posteriores && (posteriores.length != 0 && (posteriores.length % 4 == 0))) {
+
           this.datosService.contadorCargaTweets++
         }
         if (this.datosService.tweetsCargados.length != 0) {
-          this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados).fecha
+          this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados)?.fecha
         }
 
       }

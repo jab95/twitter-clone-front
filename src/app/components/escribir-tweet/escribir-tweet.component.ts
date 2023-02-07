@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ViewEncapsulation } from '@angular/core';
-import { DatosService } from '../services/datos.service';
-import { Tweet } from '../models/Tweet';
-import { TweetsService } from '../services/tweets.service';
+import { DatosService } from '../../services/datos.service';
+import { Tweet } from '../../models/Tweet';
+import { TweetsService } from '../../services/tweets.service';
 import { ViewChild } from '@angular/core';
 import { ElementRef } from '@angular/core';
 import * as _ from 'lodash';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-escribir-tweet',
@@ -19,7 +20,7 @@ import { FormsModule } from '@angular/forms';
   encapsulation: ViewEncapsulation.None,
 
 })
-export class EscribirTweetComponent implements OnInit {
+export class EscribirTweetComponent implements OnInit, OnDestroy {
 
   private _tweet: Tweet = new Tweet()
   public imagenAdjuntada: boolean = false
@@ -29,9 +30,19 @@ export class EscribirTweetComponent implements OnInit {
   progress: number;
   message: string;
   currentFile: File;
-  constructor(private datosService: DatosService, private tweetsService: TweetsService, private dialogRef: MatDialogRef<EscribirTweetComponent>) { }
+
+  private _postImagenTweetSubscriber: Subscription;
+  private _postTweetSubscriber: Subscription;
 
   @ViewChild("textoTweet", { static: true }) textoTeet: ElementRef
+
+  constructor(private datosService: DatosService, private tweetsService: TweetsService, private dialogRef: MatDialogRef<EscribirTweetComponent>) { }
+
+  ngOnDestroy(): void {
+    this._postTweetSubscriber?.unsubscribe()
+    this._postImagenTweetSubscriber?.unsubscribe()
+  }
+
 
   ngOnInit(): void {
   }
@@ -72,11 +83,11 @@ export class EscribirTweetComponent implements OnInit {
     this._tweet.foto = this.currentFile ? this.currentFile.name : ""
     this._tweet.usuario = localStorage.getItem("usuario")
 
-    await this.tweetsService.postTweet(this._tweet).subscribe({
+    this._postTweetSubscriber = await this.tweetsService.postTweet(this._tweet).subscribe({
       next: async (tweet: Tweet) => {
         this._tweet = tweet
         if (this._tweet.foto) {
-          await this.tweetsService.postImagenEnTweet(this.currentFile, tweet._id + "_" + this.currentFile?.name?.replace(new RegExp(" ", 'g'), "_")).subscribe({
+          this._postImagenTweetSubscriber = await this.tweetsService.postImagenEnTweet(this.currentFile, tweet._id + "_" + this.currentFile?.name?.replace(new RegExp(" ", 'g'), "_")).subscribe({
 
           })
         }
