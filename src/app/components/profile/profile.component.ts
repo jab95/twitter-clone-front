@@ -12,6 +12,7 @@ import { lastValueFrom, Subscription } from 'rxjs';
 import { LoginService } from '../../services/login.service';
 import { Usuario } from '../../models/Usuario';
 import { environment } from 'src/environments/environment';
+declare var require: any
 
 @Component({
   selector: 'app-profile',
@@ -37,6 +38,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 
   constructor(public datosService: DatosService, private router: Router, private userService: LoginService, private route: ActivatedRoute, private tweetsService: TweetsService) {
+
+    this.datosService.hayTweets = false
+    this.fotoPerfil = "../../../assets/gray.png"
 
     if (this.route.snapshot.paramMap.get("usuario") == "") {
       this.username = localStorage.getItem("usuario")

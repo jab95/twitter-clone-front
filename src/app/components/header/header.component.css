@@ -3,7 +3,6 @@ main {
     position: sticky;
     top: 25px;
     z-index: 2;
-    background-color: transparent;
 
 }
 
@@ -18,6 +17,11 @@ main {
 
 
 }
+
+.input-buscador {
+    width: 100%;
+}
+
 
 .col1:hover,
 .col2:hover,
@@ -52,5 +56,13 @@ main {
     border: thin solid gray;
     width: 5rem;
     background: #C3ECEA;
+
+}
+
+.col5 {
+    width: 15rem;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
 
 }

@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter, Route, RouterModule, Routes } from '@angular/router';
@@ -14,6 +14,7 @@ import { MainTlComponent } from './app/components/main-tl/main-tl.component';
 import { LoginComponent } from './app/components/login/login.component';
 import { HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { AuthService } from './app/auth/auth.service';
+import { HttpRequestInterceptor } from './app/interceptor/HttpRequestInterceptor';
 
 if (environment.production) {
   enableProdMode();
@@ -32,10 +33,8 @@ export const ROUTES: Route[] = [
 
 bootstrapApplication(AppComponent, {
   providers: [
-    { provide: LoginService, useClass: LoginService },
-    { provide: RegistroService, useClass: RegistroService },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
-    { provide: AuthService, useClass: AuthService },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
     importProvidersFrom(HttpClientModule, BrowserAnimationsModule, ToastrModule.forRoot(), RouterModule.forRoot(ROUTES, { useHash: true })),
 
   ]

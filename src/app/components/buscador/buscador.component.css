@@ -1,0 +1,82 @@
+.buscador {
+    display: flex;
+    align-items: center;
+    top: 20px;
+    margin-top: 2rem;
+}
+
+.input-buscador {
+    width: 20rem;
+    border: 1px solid;
+    border-radius: 20px;
+    font-size: 16px;
+    background-color: #92d1ce;
+    background-image: url('../../../assets/sr.png');
+    background-position: 10px;
+    background-size: 20px;
+    background-repeat: no-repeat;
+    padding: 10px 18px 10px 38px;
+    outline: none;
+    z-index: 5;
+
+}
+
+.div-search-results {
+
+    position: absolute;
+    background-color: #92d1ce;
+    width: 320px;
+    border-radius: 20px;
+    z-index: 3;
+    display: block;
+    height: 331px;
+
+}
+
+
+.div-search-results2 {
+
+    display: none;
+
+}
+
+
+.div-texto-tweet {
+    margin-left: 2rem;
+    margin-top: 1rem;
+}
+
+.usuariosSearch {
+    position: relative;
+    transform: translate(0, 50px);
+    cursor: pointer;
+    z-index: 1;
+}
+
+.usuariosSearch:hover {
+    background-color: #5dc9c3;
+}
+
+
+.usuariosSearch:nth-child(4) {
+    border-bottom: none;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+
+}
+
+.div-img-tweet {
+    margin-left: 30px;
+    margin-top: 10px;
+}
+
+
+#icon-tweet {
+    z-index: 5;
+    width: 60px;
+    height: 60px;
+    object-fit: fill;
+    clip-path: circle(45% at 50% 50%);
+
+
+}

@@ -16,7 +16,6 @@ import { environment } from 'src/environments/environment';
   imports: [CommonModule, HeaderComponent],
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.css'],
-  encapsulation: ViewEncapsulation.None
 })
 export class ConfigComponent implements OnInit, OnDestroy {
 
@@ -31,7 +30,12 @@ export class ConfigComponent implements OnInit, OnDestroy {
   private _postProfileSubscriber: Subscription;
   private _changeProfileSubscriber: Subscription;
 
-  constructor(private configService: ConfigService, private userService: LoginService, private datosService: DatosService) { }
+  constructor(private configService: ConfigService, private userService: LoginService, private datosService: DatosService) {
+
+    this.preview = "../../../assets/gray.png"
+
+
+  }
 
 
   ngOnDestroy(): void {

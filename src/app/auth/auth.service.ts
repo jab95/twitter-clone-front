@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-@Injectable()
+import { Router, UrlTree } from '@angular/router';
+
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
 
   constructor(public router: Router) { }
 
-  canActivate(): boolean {
+  canActivate(): true | UrlTree {
     const user = localStorage.getItem("usuario")
 
     if (user == null || user == "") {
-      console.log("aa")
-      this.router.navigate(['login']);
-      return false;
+      return this.router.parseUrl('login');
     }
     return true;
   }

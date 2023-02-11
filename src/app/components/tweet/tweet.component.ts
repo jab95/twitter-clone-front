@@ -29,7 +29,11 @@ export class TweetComponent implements OnInit {
   haceCuanto: string;
   private _usuarioActual: Usuario
 
-  constructor(private datosService: DatosService, private userService: LoginService) { }
+  constructor(private datosService: DatosService, private userService: LoginService) {
+
+    this.fotoPerfil = "../../../assets/gray.png"
+
+  }
 
   @waitForInit
   ngOnInit(): void {

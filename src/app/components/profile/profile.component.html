@@ -24,7 +24,8 @@
             <h3 class="mt-5">No hay Twoots</h3>
         </ng-template>
     </div>
-    <div class="mt-2  d-flex justify-content-center">
+
+    <div *ngIf="datosService.hayTweets" class="mt-2  d-flex justify-content-center">
         <button type="button" (click)="cargarTweetsAnteriores()" class="btn rounded-pill btn-lg btn-primary mb-2">Cargar
             anteriores...</button>
     </div>

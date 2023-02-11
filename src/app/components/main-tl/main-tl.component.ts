@@ -1,22 +1,28 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { HeaderComponent } from '../../components/header/header.component';
 import { TweetComponent } from '../tweet/tweet.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinner, MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { Tweet } from '../../models/Tweet';
 import { DatosService } from '../../services/datos.service';
 import { TweetsService } from '../../services/tweets.service';
 import * as _ from "lodash"
 import { NavigationStart, Router } from '@angular/router';
 import { init, waitForInit } from '../../directivas/init';
-import { Observable, Subscriber, Subscription } from 'rxjs';
+import { lastValueFrom, Observable, Subscriber, Subscription, delay, first } from 'rxjs';
+import { Usuario } from 'src/app/models/Usuario';
+import { LoginService } from 'src/app/services/login.service';
+import { BuscadorComponent } from '../buscador/buscador.component';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
   selector: 'app-main-tl',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, TweetComponent, MatDialogModule, NgIf, NgFor,],
+  imports: [CommonModule, HeaderComponent, TweetComponent, MatProgressSpinnerModule, MatDialogModule, NgIf, NgFor, BuscadorComponent],
   templateUrl: './main-tl.component.html',
-  styleUrls: ['./main-tl.component.css']
+  styleUrls: ['./main-tl.component.css'],
+
 })
 export class MainTlComponent implements OnInit, OnDestroy {
 
@@ -24,25 +30,33 @@ export class MainTlComponent implements OnInit, OnDestroy {
   private _tweetsBeforeSubscribe: Subscription;
   private _tweetsAfterSubscribe: Subscription;
   private _tweetsSubscribe: Subscription;
+  loading: boolean = true;
+  private _tweetsAnteriores: any;
 
-  constructor(private dialog: MatDialog, private router: Router, public datosService: DatosService, private tweetsService: TweetsService) {
+  constructor(private dialog: MatDialog, private loadingService: LoadingService, private router: Router, public datosService: DatosService, private tweetsService: TweetsService) {
     this.datosService.estaEnMain = true
+    this.datosService.hayTweets = false
 
-    // this.router.events.subscribe((event: any) => {
-    //   if (event instanceof NavigationStart) {
-    //     // Show progress spinner or progress bar
-
-    //   }
-    // })
 
   }
 
-  private _tweetsAnteriores: any;
+
+  listenToLoading(): void {
+    this.loadingService.loadingSub
+      .pipe(delay(0), first()) // This prevents a ExpressionChangedAfterItHasBeenCheckedError for subsequent requests
+      .subscribe((loading) => {
+        this.loading = loading;
+        console.log(this.loading)
+      });
+  }
+
+
 
   @waitForInit
   ngOnInit(): void {
 
     this.datosService.templateActual = "home"
+    this.listenToLoading();
 
     if (_.isNil(localStorage.getItem("usuario"))) {
       this.router.navigate(["/login"])
@@ -102,40 +116,33 @@ export class MainTlComponent implements OnInit, OnDestroy {
 
   async cargarTweets() {
 
+    const tweets: any = await lastValueFrom(this.tweetsService.getTwets(this.datosService.contadorCargaTweets))
+    if (this.datosService.tweetsCargados.length < tweets.totalDocs) {
+
+      this.datosService.tweetsCargados = _.uniqWith(this.datosService.tweetsCargados.concat(tweets.docs), _.isEqual)
+
+    } else {
 
 
-    this._tweetsSubscribe = await this.tweetsService.getTwets(this.datosService.contadorCargaTweets).subscribe({
-      next: (tweets: Tweet) => {
+      this.datosService.hayTweetsPorVerMain = false;
 
-        if (this.datosService.tweetsCargados.length < tweets.totalDocs) {
-
-          this.datosService.tweetsCargados = _.uniqWith(this.datosService.tweetsCargados.concat(tweets.docs), _.isEqual)
-
-        } else {
-
-
-          this.datosService.hayTweetsPorVerMain = false;
-
-        }
+    }
 
 
 
-        if (tweets.totalDocs == 0) {
-          this.datosService.hayTweets = false
-          this.datosService.tweetsCargados = []
-          this.datosService.contadorCargaTweets = 1
-        } else {
+    if (tweets.totalDocs == 0) {
+      this.datosService.hayTweets = false
+      this.datosService.tweetsCargados = []
+      this.datosService.contadorCargaTweets = 1
+    } else {
 
-          this.datosService.hayTweets = true
-          this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados)?.fecha
+      this.datosService.hayTweets = true
+      this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados)?.fecha
 
-        }
+    }
 
-      }, complete: () => {
-
-      }
-    })
   }
+
 
   cargarTweetsAnteriores() {
 

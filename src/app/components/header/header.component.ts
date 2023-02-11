@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EventEmitter } from '@angular/core';
 import { Output } from '@angular/core';
@@ -20,8 +20,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Output() newItemEvent = new EventEmitter<Object>();
 
+
   private _countTweetsSubscriber: Subscription;
   private _tweetsAferSubscriber: Subscription;
+
+  buscadorAbierto: boolean = false
 
   private _tweets: any
   user: string
@@ -87,6 +90,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
   }
+
 
   logout() {
     localStorage.removeItem("usuario")
