@@ -14,7 +14,7 @@ import { MainTlComponent } from './app/components/main-tl/main-tl.component';
 import { LoginComponent } from './app/components/login/login.component';
 import { HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { AuthService } from './app/auth/auth.service';
-import { HttpRequestInterceptor } from './app/interceptor/HttpRequestInterceptor';
+import { HttpRequestInterceptor } from './app/interceptor/httpRequestInterceptor';
 
 if (environment.production) {
   enableProdMode();
