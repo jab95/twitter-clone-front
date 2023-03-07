@@ -13,7 +13,6 @@ import { Usuario } from '../../models/Usuario';
 import { DatosService } from '../../services/datos.service';
 import { LoginService } from '../../services/login.service';
 import { TweetsService } from '../../services/tweets.service';
-declare var require: any
 
 @Component({
   selector: 'app-profile',
@@ -43,6 +42,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     localStorage.setItem("currentLocation", "profile")
     this.datosService.hayTweets = false
     this.fotoPerfil = "../../../assets/gray.png"
+    this.fotoCabecera = "../../../assets/gray.png"
 
     if (this.route.snapshot.paramMap.get("usuario") == "") {
       this.username = localStorage.getItem("usuario")
@@ -69,10 +69,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this.listenToLoading()
 
+    console.log("asd")
+    console.log(new Date().getMilliseconds())
     lastValueFrom(this.userService.findUserByName(this.username)).then((data: Usuario) => {
-
-
-      console.log(data)
+      console.log(new Date().getMilliseconds())
 
       this.fotoPerfil = data.fotoPerfil
       this.fotoCabecera = data.fotoCabecera
@@ -172,7 +172,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       }, complete: () => {
 
-        if (this._tweetsAnteriores && (this._tweetsAnteriores.length != 0 && (this._tweetsAnteriores.length % 4 == 0))) {
+        if (this._tweetsAnteriores && (this._tweetsAnteriores.length && (this._tweetsAnteriores.length % 4 == 0))) {
           this.contadorCargaTweetsProfile++
         }
 
@@ -185,11 +185,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   async cargarTweets() {
 
-    console.log("a1")
     await lastValueFrom(this.tweetsService.getTwetsByProfile(this.username, this.contadorCargaTweetsProfile)).then((tweets: Tweet) => {
-      console.log("a2")
-      console.log(tweets)
-
       this.tweetsCargadosProfile = []
 
       if (this.tweetsCargadosProfile.length < tweets.totalDocs) {
@@ -203,11 +199,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       }
 
-      console.log(this.datosService.hayTweets)
-      console.log(tweets)
 
       if (!tweets.totalDocs) {
-        console.log("aaa")
         this.datosService.hayTweets = false
         this.tweetsCargadosProfile = []
         this.contadorCargaTweetsProfile = 1
@@ -218,7 +211,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       }
 
-      if (this.tweetsCargadosProfile.length != 0 && (this.tweetsCargadosProfile.length % 4 == 0)) {
+      if (this.tweetsCargadosProfile.length && (this.tweetsCargadosProfile.length % 4 == 0)) {
 
         this.contadorCargaTweetsProfile++
       }

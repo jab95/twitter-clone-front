@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { first, map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Tweet } from '../../models/Tweet';
 import { LoginService } from '../../services/login.service';
@@ -22,10 +22,12 @@ export class TweetComponent implements OnInit {
 
   public imagenAdjuntada: boolean = false
   haceCuanto: string;
-  fotoPerfil$: Observable<String>;
+  fotoPerfil$: Observable<String> = null;
+  fotoPerfilTweet: string
 
   constructor(public userService: LoginService) {
 
+    this.fotoPerfilTweet = "../../../assets/gray.png"
     this.fotoPerfil = "../../../assets/gray.png"
 
   }
@@ -34,10 +36,15 @@ export class TweetComponent implements OnInit {
 
 
 
-    this.fotoPerfil$ = this.userService.findUserByName(this.tweetActual.usuario).pipe(map((usuario) => {
-      console.log(usuario)
-      return usuario.fotoPerfil
-    }))
+    this.userService.findUserByName(this.tweetActual.usuario)
+      .pipe(
+        first(),
+        map((usuario) => {
+          return usuario.fotoPerfil
+        }))
+      .subscribe((perfil) => {
+        this.fotoPerfilTweet = perfil
+      })
 
     this.imagenAdjuntada = this.tweetActual.foto ? true : false
     // this.haceCuanto = this.tweetActual.fecha.getTime()
