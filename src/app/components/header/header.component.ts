@@ -1,13 +1,10 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EventEmitter } from '@angular/core';
-import { Output } from '@angular/core';
-import { TweetsService } from '../../services/tweets.service';
-import { Tweet } from '../../models/Tweet';
-import { DatosService } from '../../services/datos.service';
-import * as _ from "lodash"
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import * as _ from "lodash";
 import { Subscription } from 'rxjs';
+import { DatosService } from '../../services/datos.service';
+import { TweetsService } from '../../services/tweets.service';
 
 @Component({
   selector: 'app-header',

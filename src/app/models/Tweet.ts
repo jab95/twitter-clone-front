@@ -1,16 +1,13 @@
-import { Usuario } from "./Usuario";
 
 export class Tweet {
 
-    docs: any
-    totalDocs: any
-    texto: string;
-    foto: string;
-    usuario: string;
-    _id: string;
-    fecha: Date;
-
-    constructor() {
+    constructor(public docs?: any,
+        public totalDocs?: any,
+        public texto?: string,
+        public foto?: string,
+        public usuario?: string,
+        public _id?: string,
+        public fecha?: Date,) {
 
     }
 

@@ -18,6 +18,7 @@ main {
     max-width: 80%;
 }
 
+
 .texto-nuevos-tweets {
     color: green;
 }
@@ -31,6 +32,21 @@ main {
 #imagen-adjuntada-tweet {
 
 
-    width: 100px !important;
-    height: 100px !important;
+    width: 80px !important;
+    height: 80px !important;
+}
+
+.tercer {
+    display: flex;
+    align-items: center;
+    margin-left: 25px;
+    width: 100px;
+}
+
+.div-foto {
+    margin-left: 25px;
+}
+
+.btn-change {
+    width: 100px;
 }

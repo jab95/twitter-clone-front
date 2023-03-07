@@ -2,6 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Tweet } from '../models/Tweet';
+import { LoadingService } from './loading.service';
+import { map, finalize } from "rxjs"
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,7 @@ export class TweetsService {
 
   url: string = environment.url
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private _loadingService: LoadingService) { }
 
 
   public postTweet(tweet: Tweet) {
@@ -33,7 +35,10 @@ export class TweetsService {
       .set('page', contadorCargaTweets)
 
 
-    return this.http.get(`${this.url}/tweet/getTweets`, { params })
+    this._loadingService.setLoading(true)
+    return this.http.get<Tweet>(`${this.url}/tweet/getTweets`, { params }).pipe(finalize(() => {
+      this._loadingService.setLoading(false)
+    }))
   }
 
   public getTwetsByProfile(user, contadorCargaTweets) {

@@ -1,15 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { ViewEncapsulation } from '@angular/core';
-import { DatosService } from '../../services/datos.service';
-import { Tweet } from '../../models/Tweet';
-import { TweetsService } from '../../services/tweets.service';
-import { ViewChild } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import * as _ from 'lodash';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { Tweet } from '../../models/Tweet';
+import { DatosService } from '../../services/datos.service';
+import { TweetsService } from '../../services/tweets.service';
 
 @Component({
   selector: 'app-escribir-tweet',

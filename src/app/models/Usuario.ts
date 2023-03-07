@@ -1,10 +1,11 @@
 export class Usuario {
-    user: string;
-    pass?: string;
-    fotoPerfil?: string;
-    descripcion?: string;
 
-    constructor() {
+
+    constructor(public user?: string,
+        public pass?: string,
+        public fotoPerfil?: string,
+        public fotoCabecera?: string,
+        public descripcion?: string,) {
 
     }
 

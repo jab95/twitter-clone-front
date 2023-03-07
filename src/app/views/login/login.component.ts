@@ -1,12 +1,12 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { LoginService } from '../../services/login.service';
+import { CommonModule } from '@angular/common';
 import { } from '@angular/common/http';
-import { CommonModule, NgIf } from '@angular/common';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatDialogModule } from '@angular/material/dialog';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
-import { from, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { RegistroComponent } from '../../components/registro/registro.component';
 import { DatosService } from '../../services/datos.service';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +15,7 @@ import { DatosService } from '../../services/datos.service';
     CommonModule,
     RouterModule,
     MatDialogModule,
-    NgIf,
+    RegistroComponent
 
   ],
   templateUrl: './login.component.html',
@@ -66,9 +66,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 
   async openDialog() {
-    const { RegistroComponent } = await import(
-      '../registro/registro.component'
-    );
+
     const dialogRef = this.dialog.open(RegistroComponent, { disableClose: true });
 
     dialogRef.afterClosed().subscribe(result => {

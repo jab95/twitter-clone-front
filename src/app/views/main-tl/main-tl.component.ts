@@ -1,25 +1,23 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { HeaderComponent } from '../../components/header/header.component';
-import { TweetComponent } from '../tweet/tweet.component';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatProgressSpinner, MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { Tweet } from '../../models/Tweet';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
+import * as _ from "lodash";
+import { lastValueFrom, Subscription } from 'rxjs';
+import { Tweet } from 'src/app/models/Tweet';
+import { LoadingService } from 'src/app/services/loading.service';
+import { BuscadorComponent } from '../../components/buscador/buscador.component';
+import { HeaderComponent } from '../../components/header/header.component';
+import { TweetComponent } from '../../components/tweet/tweet.component';
+import { init, waitForInit } from '../../directivas/init';
 import { DatosService } from '../../services/datos.service';
 import { TweetsService } from '../../services/tweets.service';
-import * as _ from "lodash"
-import { NavigationStart, Router } from '@angular/router';
-import { init, waitForInit } from '../../directivas/init';
-import { lastValueFrom, Observable, Subscriber, Subscription, delay, first } from 'rxjs';
-import { Usuario } from 'src/app/models/Usuario';
-import { LoginService } from 'src/app/services/login.service';
-import { BuscadorComponent } from '../buscador/buscador.component';
-import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
   selector: 'app-main-tl',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, TweetComponent, MatProgressSpinnerModule, MatDialogModule, NgIf, NgFor, BuscadorComponent],
+  imports: [CommonModule, HeaderComponent, TweetComponent, MatProgressSpinnerModule, MatDialogModule, BuscadorComponent],
   templateUrl: './main-tl.component.html',
   styleUrls: ['./main-tl.component.css'],
 
@@ -30,47 +28,33 @@ export class MainTlComponent implements OnInit, OnDestroy {
   private _tweetsBeforeSubscribe: Subscription;
   private _tweetsAfterSubscribe: Subscription;
   private _tweetsSubscribe: Subscription;
-  loading: boolean = true;
+  loading: boolean = false;
   private _tweetsAnteriores: any;
 
   constructor(private dialog: MatDialog, private loadingService: LoadingService, private router: Router, public datosService: DatosService, private tweetsService: TweetsService) {
     this.datosService.estaEnMain = true
-    this.datosService.hayTweets = false
 
 
-  }
-
-
-  listenToLoading(): void {
-    this.loadingService.loadingSub
-      .pipe(delay(0), first()) // This prevents a ExpressionChangedAfterItHasBeenCheckedError for subsequent requests
-      .subscribe((loading) => {
-        this.loading = loading;
-        console.log(this.loading)
-      });
   }
 
 
 
   @waitForInit
   ngOnInit(): void {
-
-    this.datosService.templateActual = "home"
-    this.listenToLoading();
-
     if (_.isNil(localStorage.getItem("usuario"))) {
       this.router.navigate(["/login"])
     }
 
     this._interval = setInterval(() => {
       this.cargarTweetsPosteriores("intervalo");
-    }, 20000)
+    }, 7000)
 
   }
 
   @init
   async cargaTweetsBeforeInit() {
-    await this.cargarTweets()
+
+    await this.cargarTweets(localStorage.getItem("currentLocation"))
 
   }
 
@@ -98,7 +82,7 @@ export class MainTlComponent implements OnInit, OnDestroy {
 
   async twetear() {
     const { EscribirTweetComponent } = await import(
-      '../escribir-tweet/escribir-tweet.component'
+      '../../components/escribir-tweet/escribir-tweet.component'
     );
     const dialogRef = this.dialog.open(EscribirTweetComponent, { width: "500px", maxHeight: "fit-content" });
 
@@ -114,32 +98,36 @@ export class MainTlComponent implements OnInit, OnDestroy {
   }
 
 
-  async cargarTweets() {
+  async cargarTweets(currentLocation?: string) {
 
-    const tweets: any = await lastValueFrom(this.tweetsService.getTwets(this.datosService.contadorCargaTweets))
-    if (this.datosService.tweetsCargados.length < tweets.totalDocs) {
+    if (_.isEqual(currentLocation, "main") || _.isEmpty(this.datosService.tweetsCargados)) {
 
-      this.datosService.tweetsCargados = _.uniqWith(this.datosService.tweetsCargados.concat(tweets.docs), _.isEqual)
+      const tweets: Tweet = await lastValueFrom(this.tweetsService.getTwets(this.datosService.contadorCargaTweets))
+      if (this.datosService.tweetsCargados.length < tweets.totalDocs) {
 
+        this.datosService.tweetsCargados = _.uniqWith(this.datosService.tweetsCargados.concat(tweets.docs), _.isEqual)
+      } else {
+        this.datosService.hayTweetsPorVerMain = false;
+
+      }
+
+      if (tweets.totalDocs == 0) {
+        this.datosService.hayTweets = false
+        this.datosService.tweetsCargados = []
+        this.datosService.contadorCargaTweets = 1
+      } else {
+
+        this.datosService.hayTweets = true
+        this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados)?.fecha
+
+      }
     } else {
-
-
-      this.datosService.hayTweetsPorVerMain = false;
-
+      if (this.datosService.tweetsCargados.length) {
+        this.datosService.hayTweets = true
+      }
     }
 
-
-
-    if (tweets.totalDocs == 0) {
-      this.datosService.hayTweets = false
-      this.datosService.tweetsCargados = []
-      this.datosService.contadorCargaTweets = 1
-    } else {
-
-      this.datosService.hayTweets = true
-      this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados)?.fecha
-
-    }
+    localStorage.setItem("currentLocation", "main")
 
   }
 

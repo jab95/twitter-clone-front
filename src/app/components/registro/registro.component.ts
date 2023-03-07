@@ -1,38 +1,33 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { ViewEncapsulation } from '@angular/core';
-import { RegistroService } from 'src/app/services/registro.service';
 import { ToastrService } from 'ngx-toastr';
+import { catchError, lastValueFrom, of } from 'rxjs';
 import { Usuario } from 'src/app/models/Usuario';
-import { Subscription } from 'rxjs';
+import { RegistroService } from 'src/app/services/registro.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatDialogModule, NgIf],
+  imports: [CommonModule, MatButtonModule, MatDialogModule],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.css'],
   encapsulation: ViewEncapsulation.None,
 
 })
-export class RegistroComponent implements OnInit, OnDestroy {
+export class RegistroComponent implements OnInit {
 
   public errorRegistro: boolean = false
 
-  usuario = new Usuario()
+  usuario: Usuario = new Usuario()
 
 
   @ViewChild('pass', { static: true }) pass!: ElementRef;
   @ViewChild('user', { static: true }) user!: ElementRef;
-  private _postUserSubscriber: Subscription;
 
   constructor(private registroService: RegistroService, private toastr: ToastrService, private dialogRef: MatDialogRef<RegistroComponent>) { }
-
-  ngOnDestroy(): void {
-    this._postUserSubscriber?.unsubscribe()
-  }
 
   ngOnInit(): void {
 
@@ -47,20 +42,18 @@ export class RegistroComponent implements OnInit, OnDestroy {
 
       this.usuario.pass = this.pass.nativeElement.value
       this.usuario.user = this.user.nativeElement.value
-      this.usuario.fotoPerfil = "profile-default"
-      this._postUserSubscriber = this.registroService.postUser(this.usuario).subscribe(
-        {
-          next: (data) => {
-          },
-          error: (err) => {
-            this.toastr.success("Registrado", "Ha habido un error con el registro")
+      this.usuario.fotoPerfil = environment.url + "/images/profiles/logo-angular.png"
+      this.usuario.fotoCabecera = environment.url + "/images/headers/back-log.webp"
 
-          },
-          complete: () => {
-            this.toastr.success("Registrado", "El usuario se registro correctamente")
-            this.dialogRef.close()
-          }
-        }
+      lastValueFrom(this.registroService.postUser(this.usuario).pipe(
+        catchError(() => {
+          this.toastr.error("Registrado", "Ha habido un error con el registro")
+          return of("")
+        }))
+      ).then(() => {
+        this.toastr.success("Registrado", "El usuario se registro correctamente")
+        this.dialogRef.close()
+      }
       )
     }
 

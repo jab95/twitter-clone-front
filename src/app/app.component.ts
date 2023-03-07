@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { from } from 'rxjs';
 import { HeaderComponent } from './components/header/header.component';
-import { LoginComponent } from './components/login/login.component';
-import { MainTlComponent } from './components/main-tl/main-tl.component';
+import { LoginComponent } from './views/login/login.component';
+import { MainTlComponent } from './views/main-tl/main-tl.component';
 import { RegistroComponent } from './components/registro/registro.component';
 
 @Component({

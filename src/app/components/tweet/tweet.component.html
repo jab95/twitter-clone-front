@@ -1,12 +1,13 @@
 <main>
     <div class="d-flex flex-row">
         <div class="div-img-tweet">
-            <img id="icon-tweet" [src]="fotoPerfil" alt="">
+            <img id="icon-tweet" [src]="fotoPerfil$ | async" alt="">
         </div>
         <div class="div-texto-tweet">
             <p class="nombre-usuario-tweet"><span id="name-main-profile"
                     [routerLink]="['/profile',tweetActual.usuario]">
-                    {{tweetActual.usuario}}</span> <span> · {{haceCuanto}}</span>
+                    {{tweetActual.usuario}}</span>
+                <!-- <span> · {{haceCuanto}}</span> -->
             </p>
             <p class="texto-tweet-actual"> {{tweetActual.texto}} </p>
             <ng-container *ngIf="imagenAdjuntada">

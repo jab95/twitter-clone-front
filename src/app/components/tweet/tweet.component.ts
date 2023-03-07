@@ -1,20 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
-import { Input } from '@angular/core';
-import { Tweet } from '../../models/Tweet';
-import { AfterViewInit } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { DatosService } from '../../services/datos.service';
-import { LoginService } from '../../services/login.service';
-import { Usuario } from '../../models/Usuario';
-import { init, waitForInit } from '../../directivas/init';
-import { lastValueFrom } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { map, Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { Tweet } from '../../models/Tweet';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-tweet',
   standalone: true,
-  imports: [CommonModule, NgIf, RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './tweet.component.html',
   styleUrls: ['./tweet.component.css']
 })
@@ -27,16 +22,22 @@ export class TweetComponent implements OnInit {
 
   public imagenAdjuntada: boolean = false
   haceCuanto: string;
-  private _usuarioActual: Usuario
+  fotoPerfil$: Observable<String>;
 
-  constructor(private datosService: DatosService, private userService: LoginService) {
+  constructor(public userService: LoginService) {
 
     this.fotoPerfil = "../../../assets/gray.png"
 
   }
 
-  @waitForInit
   ngOnInit(): void {
+
+
+
+    this.fotoPerfil$ = this.userService.findUserByName(this.tweetActual.usuario).pipe(map((usuario) => {
+      console.log(usuario)
+      return usuario.fotoPerfil
+    }))
 
     this.imagenAdjuntada = this.tweetActual.foto ? true : false
     // this.haceCuanto = this.tweetActual.fecha.getTime()
@@ -53,24 +54,7 @@ export class TweetComponent implements OnInit {
 
     this.imagenTweet = environment.url + "/images/" + this.tweetActual._id + "_" + this.tweetActual.foto.replace(new RegExp(" ", 'g'), "_");
 
-    if (this._usuarioActual.fotoPerfil == "profile-default") {
-      this.fotoPerfil = "/assets/logo-angular.png"
-    } else {
-      this.fotoPerfil = environment.url + "/images/profiles/" + this._usuarioActual.fotoPerfil
 
-    }
-
-  }
-
-  @init
-  async _getFotoPerfil() {
-
-
-    await lastValueFrom(this.userService.findUserByName(this.tweetActual.usuario)).then((data: Usuario) => {
-
-      this._usuarioActual = data
-
-    })
 
   }
 

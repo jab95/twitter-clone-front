@@ -43,3 +43,8 @@ main {
     margin-left: 20px;
     margin-top: 15px;
 }
+
+:host ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+    stroke: #92d1ce
+}

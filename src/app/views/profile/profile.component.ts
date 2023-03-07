@@ -1,23 +1,24 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from '../header/header.component';
-import { DatosService } from '../../services/datos.service';
-import { ActivatedRoute, NavigationStart, Route, Router } from '@angular/router';
-import { TweetsService } from '../../services/tweets.service';
-import * as _ from "lodash"
-import { TweetComponent } from '../tweet/tweet.component';
-import { Tweet } from '../../models/Tweet';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ActivatedRoute, Router } from '@angular/router';
+import * as _ from "lodash";
+import { delay, first, lastValueFrom, Subscription } from 'rxjs';
+import { LoadingService } from 'src/app/services/loading.service';
+import { HeaderComponent } from '../../components/header/header.component';
+import { TweetComponent } from '../../components/tweet/tweet.component';
 import { init, waitForInit } from '../../directivas/init';
-import { lastValueFrom, Subscription } from 'rxjs';
-import { LoginService } from '../../services/login.service';
+import { Tweet } from '../../models/Tweet';
 import { Usuario } from '../../models/Usuario';
-import { environment } from 'src/environments/environment';
+import { DatosService } from '../../services/datos.service';
+import { LoginService } from '../../services/login.service';
+import { TweetsService } from '../../services/tweets.service';
 declare var require: any
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, TweetComponent],
+  imports: [CommonModule, HeaderComponent, TweetComponent, MatProgressSpinnerModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
@@ -26,19 +27,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
   username: string
   private _tweetsAnteriores: any;
   fotoPerfil: string
+  fotoCabecera: string
   tweetsCargadosProfile: Tweet[];
   contadorCargaTweetsProfile: number = 1;
   descripcion: string;
   private _interval = null
+  loading: boolean = false;
 
   private _tweetsAfterSubscriber: Subscription;
   private _tweetsBeforeSubscriber: Subscription;
-  private _tweetsProfileSubscriber: Subscription;
+  private _loadingSubsciption$: Subscription;
 
+  constructor(public datosService: DatosService, private loadingService: LoadingService, private router: Router, private userService: LoginService, private route: ActivatedRoute, private tweetsService: TweetsService) {
 
-
-  constructor(public datosService: DatosService, private router: Router, private userService: LoginService, private route: ActivatedRoute, private tweetsService: TweetsService) {
-
+    localStorage.setItem("currentLocation", "profile")
     this.datosService.hayTweets = false
     this.fotoPerfil = "../../../assets/gray.png"
 
@@ -58,33 +60,47 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this._tweetsAfterSubscriber?.unsubscribe()
     this._tweetsBeforeSubscriber?.unsubscribe()
-    this._tweetsProfileSubscriber?.unsubscribe()
+    this._loadingSubsciption$?.unsubscribe()
   }
 
 
+  @waitForInit
   ngOnInit(): void {
 
-
+    this.listenToLoading()
 
     lastValueFrom(this.userService.findUserByName(this.username)).then((data: Usuario) => {
 
-      if (data.fotoPerfil == "profile-default") {
-        this.fotoPerfil = "/assets/logo-angular.png"
-      } else {
-        this.fotoPerfil = environment.url + "/images/profiles/" + data.fotoPerfil
 
-      }
+      console.log(data)
 
+      this.fotoPerfil = data.fotoPerfil
+      this.fotoCabecera = data.fotoCabecera
       this.descripcion = data.descripcion
-
     })
-
-    this.cargarTweets()
 
     this._interval = setInterval(() => {
       this.cargarTweetsPosteriores("intervalo");
     }, 5000)
+
+
   }
+
+  @init
+  async cargaTweets() {
+    await this.cargarTweets()
+  }
+
+  listenToLoading(): void {
+    this._loadingSubsciption$ = this.loadingService.loadingSub
+      .pipe(delay(0), first()) // This prevents a ExpressionChangedAfterItHasBeenCheckedError for subsequent requests
+      .subscribe((loading) => {
+        this.loading = loading;
+      });
+
+  }
+
+
 
 
 
@@ -167,49 +183,50 @@ export class ProfileComponent implements OnInit, OnDestroy {
     })
   }
 
-  cargarTweets() {
+  async cargarTweets() {
+
+    console.log("a1")
+    await lastValueFrom(this.tweetsService.getTwetsByProfile(this.username, this.contadorCargaTweetsProfile)).then((tweets: Tweet) => {
+      console.log("a2")
+      console.log(tweets)
+
+      this.tweetsCargadosProfile = []
+
+      if (this.tweetsCargadosProfile.length < tweets.totalDocs) {
+
+        this.tweetsCargadosProfile = _.uniqWith(this.tweetsCargadosProfile.concat(tweets.docs), _.isEqual)
+
+      } else {
 
 
-    this._tweetsProfileSubscriber = this.tweetsService.getTwetsByProfile(this.username, this.contadorCargaTweetsProfile).subscribe({
-      next: (tweets: Tweet) => {
-
-        this.tweetsCargadosProfile = []
-
-
-        if (this.tweetsCargadosProfile.length < tweets.totalDocs) {
-
-          this.tweetsCargadosProfile = _.uniqWith(this.tweetsCargadosProfile.concat(tweets.docs), _.isEqual)
-
-        } else {
-
-
-          this.datosService.hayTweetsPorVerProfile = false;
-
-        }
-
-
-
-        if (tweets.totalDocs == 0) {
-          this.datosService.hayTweets = false
-          this.tweetsCargadosProfile = []
-          this.contadorCargaTweetsProfile = 1
-        } else {
-
-          this.datosService.hayTweets = true
-          this.datosService.fechaPosteriorProfile = _.first(this.tweetsCargadosProfile)?.fecha
-
-        }
-
-      }, complete: () => {
-
-
-        if (this.tweetsCargadosProfile.length != 0 && (this.tweetsCargadosProfile.length % 4 == 0)) {
-
-          this.contadorCargaTweetsProfile++
-        }
+        this.datosService.hayTweetsPorVerProfile = false;
 
       }
+
+      console.log(this.datosService.hayTweets)
+      console.log(tweets)
+
+      if (!tweets.totalDocs) {
+        console.log("aaa")
+        this.datosService.hayTweets = false
+        this.tweetsCargadosProfile = []
+        this.contadorCargaTweetsProfile = 1
+      } else {
+
+        this.datosService.hayTweets = true
+        this.datosService.fechaPosteriorProfile = _.first(this.tweetsCargadosProfile)?.fecha
+
+      }
+
+      if (this.tweetsCargadosProfile.length != 0 && (this.tweetsCargadosProfile.length % 4 == 0)) {
+
+        this.contadorCargaTweetsProfile++
+      }
+
     })
+
+
+
   }
 
 

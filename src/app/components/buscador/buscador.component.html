@@ -2,10 +2,10 @@
     <input #buscadorUsers type="text" class="input-buscador" (focusout)="focusOut()" (input)="escribeUsers()" name=""
         id="">
     <div [className]="usuariosAMostrar ? 'div-search-results' : 'div-search-results2'">
-        <div class="usuariosSearch d-flex flex-row" *ngFor="let user of usuariosSearchBar"
+        <div class="usuariosSearch d-flex flex-row" *ngFor="let user of userObservable$ | async"
             (mousedown)="irProfile(user.user)">
             <div class="div-img-tweet">
-                <img id="icon-tweet" src="../../../assets/logo-angular.png" alt="">
+                <img id="icon-tweet" [src]="user.fotoPerfil" alt="">
             </div>
             <div class="div-texto-tweet">
                 <p class="nombre-usuario-tweet"><span id="name-main-profile">
