@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  url: "https://twitter-clone-back-production.up.railway.app"
+  url: "https://jabtwit-back.vercel.app/"
 };
