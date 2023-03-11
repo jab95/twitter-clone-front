@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  url: "https://jabtwit-back.vercel.app/"
+  url: "https://jabtwit-back.vercel.app"
 };
