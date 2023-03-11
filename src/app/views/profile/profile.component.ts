@@ -39,6 +39,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   constructor(public datosService: DatosService, private loadingService: LoadingService, private router: Router, private userService: LoginService, private route: ActivatedRoute, private tweetsService: TweetsService) {
 
+
+
     localStorage.setItem("currentLocation", "profile")
     this.datosService.hayTweets = false
     this.fotoPerfil = "../../../assets/gray.png"
@@ -49,6 +51,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     } else {
       this.username = this.route.snapshot.paramMap.get("usuario")
     }
+
 
   }
 
@@ -64,19 +67,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
 
-  @waitForInit
+  // @waitForInit
   ngOnInit(): void {
 
     this.listenToLoading()
-
-    console.log("asd")
-    console.log(new Date().getMilliseconds())
+    // this.cargarTweets()
+    console.log(new Date().toLocaleTimeString());
+    console.log("asd");
     lastValueFrom(this.userService.findUserByName(this.username)).then((data: Usuario) => {
-      console.log(new Date().getMilliseconds())
 
       this.fotoPerfil = data.fotoPerfil
       this.fotoCabecera = data.fotoCabecera
       this.descripcion = data.descripcion
+      console.log("d2")
+      console.log(new Date().toLocaleTimeString());
+
     })
 
     this._interval = setInterval(() => {
@@ -86,10 +91,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   }
 
-  @init
-  async cargaTweets() {
-    await this.cargarTweets()
-  }
+  // @init
+  // async cargaTweets() {
+  //   await this.cargarTweets()
+  // }
 
   listenToLoading(): void {
     this._loadingSubsciption$ = this.loadingService.loadingSub
@@ -183,9 +188,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     })
   }
 
-  async cargarTweets() {
+  cargarTweets() {
 
-    await lastValueFrom(this.tweetsService.getTwetsByProfile(this.username, this.contadorCargaTweetsProfile)).then((tweets: Tweet) => {
+    lastValueFrom(this.tweetsService.getTwetsByProfile(this.username, this.contadorCargaTweetsProfile)).then((tweets: Tweet) => {
       this.tweetsCargadosProfile = []
 
       if (this.tweetsCargadosProfile.length < tweets.totalDocs) {
