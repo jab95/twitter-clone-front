@@ -71,7 +71,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.listenToLoading()
-    // this.cargarTweets()
+    this.cargarTweets()
     console.log(new Date().toLocaleTimeString());
     console.log("asd");
     lastValueFrom(this.userService.findUserByName(this.username)).then((data: Usuario) => {
