@@ -107,12 +107,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
         this.fotoPerfil = this.datosService.usuarioActual.fotoPerfil ?? this._fondoGris
         this.fotoCabecera = this.datosService.usuarioActual.fotoCabecera ?? this._fondoGris
-
+        this.descripcion = this.datosService.usuarioActual.descripcion ?? ""
 
       } else {
 
         this.fotoPerfil = this._fondoGris
         this.fotoCabecera = this._fondoGris
+        this.descripcion = ""
+
       }
 
       this.datosService.usuarioActual.user = localStorage.getItem("usuario")
