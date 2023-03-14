@@ -167,7 +167,12 @@ export class MainTlComponent implements OnInit, OnDestroy {
   cargarTweetsPosteriores(intervalo?) {
 
     let posteriores
-    this._tweetsAfterSubscribe = this.tweetsService.getTweetsAfterDate(this.datosService.contadorCargaTweets, this.datosService.fechaPosterior.toLocaleString()).subscribe({
+    let fechaAEnviar: any = this.datosService.fechaPosterior
+    if (!_.isString(this.datosService.fechaPosterior)) {
+      fechaAEnviar = this.datosService.fechaPosterior.toISOString()
+    }
+
+    this._tweetsAfterSubscribe = this.tweetsService.getTweetsAfterDate(this.datosService.contadorCargaTweets, fechaAEnviar).subscribe({
       next: (tweets: any) => {
 
         if (tweets.length != 0) {
