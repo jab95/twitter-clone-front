@@ -10,7 +10,7 @@
 
 
 
-    <div class="mt-5 d-flex justify-content-center">
+    <div class="mt-5 d-flex justify-content-center mb-5">
         <div class="tl d-flex justify-content-center ">
             <div *ngIf="loading" class="w-100 h-100  d-flex justify-content-center mt-5">
                 <mat-progress-spinner diameter="70" color="primary" mode="indeterminate">
@@ -30,7 +30,7 @@
         </div>
 
     </div>
-    <div *ngIf="datosService.hayTweets" class="mt-2  d-flex justify-content-center">
+    <div *ngIf="datosService.hayTweets" class="mb-3 d-flex justify-content-center">
         <button type="button" (click)="cargarTweetsAnteriores()" class="btn rounded-pill btn-lg btn-primary mb-2">Cargar
             anteriores...</button>
     </div>
