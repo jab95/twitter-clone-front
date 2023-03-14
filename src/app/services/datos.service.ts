@@ -15,7 +15,7 @@ export class DatosService {
   hayTweetsPorVerMain: boolean = false;
   hayTweetsPorVerProfile: boolean = false;
   tweetsCargados: Tweet[] = [];
-  fechaPosterior: Date = new Date();
+  fechaPosterior: Date;
   fechaPosteriorProfile: Date;
   fechaAnterior: Date;
   fechaAnteriorProfile: Date;
