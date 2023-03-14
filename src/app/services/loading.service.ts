@@ -27,11 +27,9 @@ export class LoadingService {
 
     if (loading === true) {
       this.loadingSub.next(true);
-      console.log("entra 1")
 
     }
     if (this.loadingMap.size === 0) {
-      console.log("entra 2")
       this.loadingSub.next(false);
     }
   }

@@ -1,19 +1,31 @@
-<main>
-    <div class="d-flex flex-row">
+<main class="prueba">
+    <div class="d-flex flex-row prueba">
         <div class="div-img-tweet">
             <img id="icon-tweet" [src]="fotoPerfilTweet" alt="">
         </div>
-        <div class="div-texto-tweet">
-            <p class="nombre-usuario-tweet"><span id="name-main-profile"
-                    [routerLink]="['/profile',tweetActual.usuario]">
-                    {{tweetActual.usuario}}</span>
+        <div class="div-texto-tweet w-100">
+            <div class="nombre-usuario-tweet">
+                <div id="name-main-profile" class=" mb-3" (click)="goProfile()">
+                    {{tweetActual.usuario}}</div>
+                <div class="options" [matMenuTriggerFor]="menu" *ngIf="tweetActual.usuario == usuarioActual">
+                    <i class="fa-solid fa-ellipsis"></i>
+
+
+                </div>
                 <!-- <span> · {{haceCuanto}}</span> -->
-            </p>
+            </div>
             <p class="texto-tweet-actual"> {{tweetActual.texto}} </p>
             <ng-container *ngIf="imagenAdjuntada">
                 <img (click)="goToUrl()" id="imagen-adjuntada-tweet" class="mb-3" [src]="imagenTweet" alt="">
             </ng-container>
         </div>
-
+        <div class="div-options">
+        </div>
     </div>
 </main>
+
+<mat-menu class="menu-options" #menu="matMenu">
+    <button mat-menu-item (click)="eliminarTweet(tweetActual._id)">
+        <span>Eliminar Twet</span>
+    </button>
+</mat-menu>

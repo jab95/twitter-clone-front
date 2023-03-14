@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import * as _ from "lodash";
 import { Subscription } from 'rxjs';
 import { DatosService } from '../../services/datos.service';
@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   user: string
 
 
-  constructor(private _tweetsService: TweetsService, public datosService: DatosService) {
+  constructor(private _tweetsService: TweetsService, public datosService: DatosService, private router: Router) {
     this.user = localStorage.getItem("usuario")
 
   }
@@ -85,6 +85,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
       })
     }
+
+  }
+
+  goProfile() {
+
+    console.log(localStorage.getItem("usuario"))
+
+    this.router.navigate(["profile/", localStorage.getItem("usuario")])
+    this.datosService.setDataProfile()
 
   }
 

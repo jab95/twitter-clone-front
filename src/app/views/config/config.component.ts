@@ -31,13 +31,13 @@ export class ConfigComponent implements OnInit, OnDestroy {
   private _changeDescSubscriber: Subscription;
   private _postProfileSubscriber: Subscription;
   private _changeProfileSubscriber: Subscription;
+  private _imagenGris: string = "../../../assets/gray.png"
 
   constructor(private configService: ConfigService, private toastr: ToastrService, private userService: LoginService, private datosService: DatosService) {
 
-    this.preview = "../../../assets/gray.png"
-    this.previewCabecera = "../../../assets/gray.png"
     localStorage.setItem("currentLocation", "config")
-
+    this.preview = this.datosService.usuarioActual.fotoPerfil ?? this._imagenGris
+    this.previewCabecera = this.datosService.usuarioActual.fotoCabecera ?? this._imagenGris
   }
 
 
@@ -50,9 +50,11 @@ export class ConfigComponent implements OnInit, OnDestroy {
     this._postProfileSubscriber?.unsubscribe()
   }
 
-  @waitForInit
   ngOnInit(): void {
     this.datosService.templateActual = "config"
+    if (_.isEqual(this.preview, this._imagenGris) || _.isEqual(this.previewCabecera, this._imagenGris)) {
+      this._getFotosUsuario();
+    }
 
   }
 
@@ -166,6 +168,8 @@ export class ConfigComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: (val: string) => {
           if (!_.isNil(val)) {
+            this.datosService.usuarioActual.fotoPerfil = urlNewProfile
+
             localStorage.setItem("usuario", val)
             this.toastr.success("Cambiado", "La foto de perfil se cambió correctamente")
           }
@@ -204,6 +208,7 @@ export class ConfigComponent implements OnInit, OnDestroy {
           if (!_.isNil(val)) {
             localStorage.setItem("usuario", val)
             this.toastr.success("Cambiado", "La imagen de cabecera se cambió correctamente")
+            this.datosService.usuarioActual.fotoCabecera = urlNewCabecera
           }
         }, error: (error) => {
           this.previewCabecera = ""
@@ -216,12 +221,17 @@ export class ConfigComponent implements OnInit, OnDestroy {
 
   }
 
-  @init
-  async _getFotosUsuario() {
-    await lastValueFrom(this.userService.findUserByName(localStorage.getItem("usuario"))).then((data: Usuario) => {
+  // @init
+  _getFotosUsuario() {
+
+
+
+    lastValueFrom(this.userService.findUserByName(localStorage.getItem("usuario"))).then((data: Usuario) => {
 
       this.preview = data.fotoPerfil
       this.previewCabecera = data.fotoCabecera
+      this.datosService.usuarioActual.fotoPerfil = this.preview
+      this.datosService.usuarioActual.fotoCabecera = this.previewCabecera
 
     })
 

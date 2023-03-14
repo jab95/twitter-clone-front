@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Tweet } from '../models/Tweet';
 import { Usuario } from '../models/Usuario';
 
@@ -14,13 +15,17 @@ export class DatosService {
   hayTweetsPorVerMain: boolean = false;
   hayTweetsPorVerProfile: boolean = false;
   tweetsCargados: Tweet[] = [];
-  fechaPosterior: Date;
+  fechaPosterior: Date = new Date();
   fechaPosteriorProfile: Date;
   fechaAnterior: Date;
   fechaAnteriorProfile: Date;
   templateActual: string
   profileUser: string = ""
   estaEnMain: boolean = false
+  usuarioActual: Usuario = new Usuario();
+
+  currentUserSubject: BehaviorSubject<Usuario> = new BehaviorSubject({} as Usuario);
+
 
   constructor() {
 
@@ -43,6 +48,10 @@ export class DatosService {
 
   }
 
+
+  setDataProfile() {
+    this.currentUserSubject.next(this.usuarioActual)
+  }
 
 
 }

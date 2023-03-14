@@ -36,6 +36,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private _tweetsAfterSubscriber: Subscription;
   private _tweetsBeforeSubscriber: Subscription;
   private _loadingSubsciption$: Subscription;
+  private _profileSubscription$: Subscription;
+  private _fondoGris: string = "../../../assets/gray.png"
 
   constructor(public datosService: DatosService, private loadingService: LoadingService, private router: Router, private userService: LoginService, private route: ActivatedRoute, private tweetsService: TweetsService) {
 
@@ -43,14 +45,36 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     localStorage.setItem("currentLocation", "profile")
     this.datosService.hayTweets = false
-    this.fotoPerfil = "../../../assets/gray.png"
-    this.fotoCabecera = "../../../assets/gray.png"
 
-    if (this.route.snapshot.paramMap.get("usuario") == "") {
+    if (this.route.snapshot.paramMap.get("usuario") == "" || this.route.snapshot.paramMap.get("usuario") == undefined) {
       this.username = localStorage.getItem("usuario")
+
     } else {
       this.username = this.route.snapshot.paramMap.get("usuario")
     }
+
+
+    // if (this.route.snapshot.paramMap.get("usuario") == "" || this.route.snapshot.paramMap.get("usuario") == undefined) {
+    //   this.username = localStorage.getItem("usuario")
+    // } else {
+    //   this.username = this.route.snapshot.paramMap.get("usuario")
+
+    // }
+
+
+
+
+
+
+    // if (this._isUsuarioActual()) {
+
+    //   this.fotoPerfil = this.datosService.usuarioActual.fotoPerfil ?? this._fondoGris
+    //   this.fotoCabecera = this.datosService.usuarioActual.fotoCabecera ?? this._fondoGris
+    // } else {
+
+    //   this.fotoPerfil = this._fondoGris
+    //   this.fotoCabecera = this._fondoGris
+    // }
 
 
   }
@@ -64,25 +88,54 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this._tweetsAfterSubscriber?.unsubscribe()
     this._tweetsBeforeSubscriber?.unsubscribe()
     this._loadingSubsciption$?.unsubscribe()
+    this._profileSubscription$?.unsubscribe()
   }
 
 
   // @waitForInit
   ngOnInit(): void {
 
-    this.listenToLoading()
-    this.cargarTweets()
-    console.log(new Date().toLocaleTimeString());
-    console.log("asd");
-    lastValueFrom(this.userService.findUserByName(this.username)).then((data: Usuario) => {
 
-      this.fotoPerfil = data.fotoPerfil
-      this.fotoCabecera = data.fotoCabecera
-      this.descripcion = data.descripcion
-      console.log("d2")
-      console.log(new Date().toLocaleTimeString());
+
+    this._profileSubscription$ = this.datosService.currentUserSubject.pipe().subscribe((datos: Usuario) => {
+
+      this._reiniciarContadores()
+
+      this.username = datos.user ?? this.route.snapshot.paramMap.get("usuario")
+
+      if (this._isUsuarioActual()) {
+
+        this.fotoPerfil = this.datosService.usuarioActual.fotoPerfil ?? this._fondoGris
+        this.fotoCabecera = this.datosService.usuarioActual.fotoCabecera ?? this._fondoGris
+
+
+      } else {
+
+        this.fotoPerfil = this._fondoGris
+        this.fotoCabecera = this._fondoGris
+      }
+
+      this.datosService.usuarioActual.user = localStorage.getItem("usuario")
+
+      this.cargarTweets()
 
     })
+
+
+    if (_.isEqual(this.fotoPerfil, this._fondoGris) || _.isEqual(this.fotoCabecera, this._fondoGris)) {
+      lastValueFrom(this.userService.findUserByName(this.username)).then((data: Usuario) => {
+
+        this.fotoPerfil = data.fotoPerfil
+        this.fotoCabecera = data.fotoCabecera
+        this.descripcion = data.descripcion
+
+        if (this._isUsuarioActual()) {
+          this.datosService.usuarioActual = { user: localStorage.getItem("usuario"), descripcion: this.descripcion, fotoCabecera: this.fotoCabecera, fotoPerfil: this.fotoPerfil }
+        }
+      })
+    }
+
+
 
     this._interval = setInterval(() => {
       this.cargarTweetsPosteriores("intervalo");
@@ -90,23 +143,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 
   }
-
-  // @init
-  // async cargaTweets() {
-  //   await this.cargarTweets()
-  // }
-
-  listenToLoading(): void {
-    this._loadingSubsciption$ = this.loadingService.loadingSub
-      .pipe(delay(0), first()) // This prevents a ExpressionChangedAfterItHasBeenCheckedError for subsequent requests
-      .subscribe((loading) => {
-        this.loading = loading;
-      });
-
-  }
-
-
-
 
 
   cargarTweetsPosteriores(intervalo?) {
@@ -206,9 +242,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 
       if (!tweets.totalDocs) {
-        this.datosService.hayTweets = false
-        this.tweetsCargadosProfile = []
-        this.contadorCargaTweetsProfile = 1
+        this._reiniciarContadores()
       } else {
 
         this.datosService.hayTweets = true
@@ -227,6 +261,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   }
 
+  private _isUsuarioActual() {
+    return _.isEqual(this.username, localStorage.getItem("usuario"))
+  }
+
+
+  private _reiniciarContadores() {
+    this.datosService.hayTweets = false
+    this.tweetsCargadosProfile = []
+    this.contadorCargaTweetsProfile = 1
+  }
 
 
 }

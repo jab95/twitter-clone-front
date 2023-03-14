@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import * as _ from "lodash";
 import { debounceTime, distinctUntilChanged, Observable, Subject, switchMap } from 'rxjs';
 import { Usuario } from 'src/app/models/Usuario';
+import { DatosService } from 'src/app/services/datos.service';
 import { LoginService } from 'src/app/services/login.service';
 
 @Component({
@@ -24,7 +25,7 @@ export class BuscadorComponent implements OnInit {
   private _searchTerm$ = new Subject<string>()
   userObservable$: Observable<Usuario[]>
 
-  constructor(private loginService: LoginService, private router: Router) {
+  constructor(private loginService: LoginService, private datosService: DatosService, private router: Router) {
 
     this.userObservable$ = this._searchTerm$.pipe(
       debounceTime(500), //para que se ejecute despues de 0.5 segundos
@@ -57,6 +58,7 @@ export class BuscadorComponent implements OnInit {
 
 
   irProfile(usuario) {
+    this.datosService.currentUserSubject.next({ user: usuario })
     this.router.navigate(["profile/", usuario])
   }
 

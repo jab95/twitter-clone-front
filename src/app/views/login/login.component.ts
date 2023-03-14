@@ -4,6 +4,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Usuario } from 'src/app/models/Usuario';
 import { RegistroComponent } from '../../components/registro/registro.component';
 import { DatosService } from '../../services/datos.service';
 import { LoginService } from '../../services/login.service';
@@ -47,11 +48,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 
     this._loginSubscriber = this.login.findUser(this.user.nativeElement.value, this.pass.nativeElement.value).subscribe({
-      next: (data: any) => {
+      next: (data: Usuario) => {
         if (data) {
           this.errorLogin = false
           localStorage.setItem("usuario", data.user)
           this.datosService.profileUser = data.user
+          this.datosService.usuarioActual = data
           this.router.navigate(['home'])
         } else {
           this.errorLogin = true

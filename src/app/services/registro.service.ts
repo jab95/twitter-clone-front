@@ -14,7 +14,6 @@ export class RegistroService {
 
   public postUser(usuario: Usuario) {
 
-    console.log(usuario)
     return this.http.post(`${this.url}/usuario/add`, usuario)
   }
 }

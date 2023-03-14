@@ -102,6 +102,14 @@ export class TweetsService {
   }
 
 
+  public deleteTweet(id: string) {
+
+
+    return this.http.delete(`${this.url}/tweet/remove/${id}`)
+  }
+
+
+
 
 
 
