@@ -50,3 +50,8 @@ main {
 .btn-change {
     width: 100px;
 }
+
+:host ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+    stroke: #529894
+}

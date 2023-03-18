@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from "lodash";
-import { delay, first, lastValueFrom, Subscription } from 'rxjs';
+import { delay, finalize, first, lastValueFrom, Subscription } from 'rxjs';
 import { LoadingService } from 'src/app/services/loading.service';
 import { HeaderComponent } from '../../components/header/header.component';
 import { TweetComponent } from '../../components/tweet/tweet.component';
@@ -39,7 +39,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private _profileSubscription$: Subscription;
   private _fondoGris: string = "../../../assets/gray.png"
 
-  constructor(public datosService: DatosService, private loadingService: LoadingService, private router: Router, private userService: LoginService, private route: ActivatedRoute, private tweetsService: TweetsService) {
+  constructor(public datosService: DatosService, public loadingService: LoadingService, private router: Router, private userService: LoginService, private route: ActivatedRoute, private tweetsService: TweetsService) {
 
 
 
@@ -138,14 +138,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
       })
     }
 
-
-
     this._interval = setInterval(() => {
       this.cargarTweetsPosteriores("intervalo");
     }, 5000)
 
-
   }
+
+
 
 
   cargarTweetsPosteriores(intervalo?) {
@@ -229,36 +228,43 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   cargarTweets() {
 
-    lastValueFrom(this.tweetsService.getTwetsByProfile(this.username, this.contadorCargaTweetsProfile)).then((tweets: Tweet) => {
-      this.tweetsCargadosProfile = []
+    this.loading = true
+    lastValueFrom(this.tweetsService.getTwetsByProfile(this.username, this.contadorCargaTweetsProfile)
+      .pipe(
+        finalize(() => {
+          this.loading = false
+        })
+      ))
+      .then((tweets: Tweet) => {
+        this.tweetsCargadosProfile = []
 
-      if (this.tweetsCargadosProfile.length < tweets.totalDocs) {
+        if (this.tweetsCargadosProfile.length < tweets.totalDocs) {
 
-        this.tweetsCargadosProfile = _.uniqWith(this.tweetsCargadosProfile.concat(tweets.docs), _.isEqual)
+          this.tweetsCargadosProfile = _.uniqWith(this.tweetsCargadosProfile.concat(tweets.docs), _.isEqual)
 
-      } else {
-
-
-        this.datosService.hayTweetsPorVerProfile = false;
-
-      }
+        } else {
 
 
-      if (!tweets.totalDocs) {
-        this._reiniciarContadores()
-      } else {
+          this.datosService.hayTweetsPorVerProfile = false;
 
-        this.datosService.hayTweets = true
-        this.datosService.fechaPosteriorProfile = _.first(this.tweetsCargadosProfile)?.fecha
+        }
 
-      }
 
-      if (this.tweetsCargadosProfile.length && (this.tweetsCargadosProfile.length % 4 == 0)) {
+        if (!tweets.totalDocs) {
+          this._reiniciarContadores()
+        } else {
 
-        this.contadorCargaTweetsProfile++
-      }
+          this.datosService.hayTweets = true
+          this.datosService.fechaPosteriorProfile = _.first(this.tweetsCargadosProfile)?.fecha
 
-    })
+        }
+
+        if (this.tweetsCargadosProfile.length && (this.tweetsCargadosProfile.length % 4 == 0)) {
+
+          this.contadorCargaTweetsProfile++
+        }
+
+      })
 
 
 

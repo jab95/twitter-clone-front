@@ -4,7 +4,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import * as _ from "lodash";
-import { lastValueFrom, Subscription } from 'rxjs';
+import { finalize, lastValueFrom, Subscription } from 'rxjs';
 import { Tweet } from 'src/app/models/Tweet';
 import { LoadingService } from 'src/app/services/loading.service';
 import { BuscadorComponent } from '../../components/buscador/buscador.component';
@@ -27,9 +27,12 @@ export class MainTlComponent implements OnInit, OnDestroy {
   private _interval = null
   private _tweetsBeforeSubscribe: Subscription;
   private _tweetsAfterSubscribe: Subscription;
+  private _loadingSubscription$: Subscription;
   private _tweetsSubscribe: Subscription;
-  loading: boolean = false;
   private _tweetsAnteriores: any;
+
+  loading: boolean = false
+
 
   constructor(private dialog: MatDialog, private loadingService: LoadingService, private router: Router, public datosService: DatosService, private tweetsService: TweetsService) {
     this.datosService.estaEnMain = true
@@ -48,6 +51,15 @@ export class MainTlComponent implements OnInit, OnDestroy {
     this._interval = setInterval(() => {
       this.cargarTweetsPosteriores("intervalo");
     }, 7000)
+
+
+    this._loadingSubscription$ = this.loadingService.loadingSub$.subscribe({
+      next: (loading) => {
+        console.log(loading)
+        this.loading = loading
+      }
+    });
+
 
   }
 
@@ -69,8 +81,7 @@ export class MainTlComponent implements OnInit, OnDestroy {
     this._tweetsAfterSubscribe?.unsubscribe()
     this._tweetsBeforeSubscribe?.unsubscribe()
     this._tweetsSubscribe?.unsubscribe()
-
-
+    this._loadingSubscription$?.unsubscribe()
 
   }
 
@@ -102,7 +113,15 @@ export class MainTlComponent implements OnInit, OnDestroy {
 
     if (_.isEqual(currentLocation, "main") || _.isEmpty(this.datosService.tweetsCargados)) {
 
-      const tweets: Tweet = await lastValueFrom(this.tweetsService.getTwets(this.datosService.contadorCargaTweets))
+      this.loading = true
+      const tweets: Tweet = await lastValueFrom(this.tweetsService.getTwets(this.datosService.contadorCargaTweets)
+        .pipe(
+          finalize(() => {
+            this.loading = false
+          })
+        ))
+
+
       if (this.datosService.tweetsCargados.length < tweets.totalDocs) {
 
         this.datosService.tweetsCargados = _.uniqWith(this.datosService.tweetsCargados.concat(tweets.docs), _.isEqual)
@@ -167,10 +186,6 @@ export class MainTlComponent implements OnInit, OnDestroy {
   cargarTweetsPosteriores(intervalo?) {
 
     let posteriores
-    let fechaAEnviar
-
-    console.log(this.datosService.fechaPosterior)
-    console.log(typeof this.datosService.fechaPosterior)
 
     this._tweetsAfterSubscribe = this.tweetsService.getTweetsAfterDate(this.datosService.contadorCargaTweets, this.datosService.fechaPosterior).subscribe({
       next: (tweets: any) => {

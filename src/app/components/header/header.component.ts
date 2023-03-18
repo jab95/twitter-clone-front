@@ -90,8 +90,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   goProfile() {
 
-    console.log(localStorage.getItem("usuario"))
-
     this.router.navigate(["profile/", localStorage.getItem("usuario")])
     this.datosService.setDataProfile()
 

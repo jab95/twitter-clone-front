@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class LoadingService {
 
-  loadingSub: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  loadingSub$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   /**
    * Contains in-progress loading requests
    */
@@ -26,11 +26,15 @@ export class LoadingService {
   setLoading(loading: boolean): void {
 
     if (loading === true) {
-      this.loadingSub.next(true);
+      console.log("envia true")
+      this.loadingSub$.next(true);
+
+    } else {
+      console.log("a")
+      this.loadingSub$.next(false);
 
     }
-    if (this.loadingMap.size === 0) {
-      this.loadingSub.next(false);
-    }
+
   }
+
 }

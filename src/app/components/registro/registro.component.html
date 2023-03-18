@@ -5,8 +5,7 @@
         <input #user type="text" class="form-control" id="user" placeholder="Usuario">
         <input #pass type="password" class="form-control mt-2" id="pass" placeholder="Contraseña">
         <ng-container *ngIf="errorRegistro">
-            <p class="mt-4 text-start texto-error-registro">* La contraseña debe de tener al menos 6 caracteres incluida
-                1 mayuscula.</p>
+            <p class="mt-4 text-start texto-error-registro">* {{errorMessage}}</p>
         </ng-container>
 
     </div>

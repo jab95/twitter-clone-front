@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Tweet } from '../models/Tweet';
 import { LoadingService } from './loading.service';
 import { map, finalize } from "rxjs"
+import { startsWith } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -35,10 +36,8 @@ export class TweetsService {
       .set('page', contadorCargaTweets)
 
 
-    this._loadingService.setLoading(true)
-    return this.http.get<Tweet>(`${this.url}/tweet/getTweets`, { params }).pipe(finalize(() => {
-      this._loadingService.setLoading(false)
-    }))
+    return this.http.get<Tweet>(`${this.url}/tweet/getTweets`, { params })
+
   }
 
   public getTwetsByProfile(user, contadorCargaTweets) {

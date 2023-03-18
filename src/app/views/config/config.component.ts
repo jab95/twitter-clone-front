@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, first, lastValueFrom, map, of, Subscription, switchMap, throwError } from 'rxjs';
+import { catchError, finalize, first, lastValueFrom, map, of, Subscription, switchMap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HeaderComponent } from '../../components/header/header.component';
 import { init, waitForInit } from '../../directivas/init';
@@ -10,11 +10,12 @@ import { ConfigService } from '../../services/config.service';
 import { DatosService } from '../../services/datos.service';
 import { LoginService } from '../../services/login.service';
 import * as _ from "lodash"
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, HeaderComponent],
+  imports: [CommonModule, HeaderComponent, MatProgressSpinnerModule],
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.css'],
 })
@@ -32,6 +33,8 @@ export class ConfigComponent implements OnInit, OnDestroy {
   private _postProfileSubscriber: Subscription;
   private _changeProfileSubscriber: Subscription;
   private _imagenGris: string = "../../../assets/gray.png"
+  loadingHeader: boolean;
+  loadingProfile: boolean;
 
   constructor(private configService: ConfigService, private toastr: ToastrService, private userService: LoginService, private datosService: DatosService) {
 
@@ -152,6 +155,7 @@ export class ConfigComponent implements OnInit, OnDestroy {
 
     //hacemos uso de rxjs para hacer unas pruebas
 
+    this.loadingProfile = true
     this._changeProfileSubscriber = this.configService.postNewImagenProfile(file, urlNewProfile)
       .pipe(
         first(),
@@ -165,6 +169,11 @@ export class ConfigComponent implements OnInit, OnDestroy {
         map((val: Usuario) => {
           return val.user
         })
+        , finalize(() => {
+          this.loadingProfile = false
+          this._fileinput.nativeElement.value = ''
+        })
+
       ).subscribe({
         next: (val: string) => {
           if (!_.isNil(val)) {
@@ -173,8 +182,6 @@ export class ConfigComponent implements OnInit, OnDestroy {
             localStorage.setItem("usuario", val)
             this.toastr.success("Cambiado", "La foto de perfil se cambió correctamente")
           }
-        }, complete: () => {
-          this._fileinput.nativeElement.value = ''
         }
       })
 
@@ -187,6 +194,7 @@ export class ConfigComponent implements OnInit, OnDestroy {
 
     //hacemos uso de rxjs para hacer unas pruebas
 
+    this.loadingHeader = true
     this._changeProfileSubscriber = this.configService.postNewImagenHeader(file, urlNewCabecera)
       .pipe(
         first(),
@@ -201,6 +209,11 @@ export class ConfigComponent implements OnInit, OnDestroy {
 
           return val.user
         })
+        , finalize(() => {
+          this.loadingHeader = false
+          this._fileinput.nativeElement.value = ''
+        })
+
       ).subscribe({
 
         next: (val: string | null) => {
@@ -214,8 +227,6 @@ export class ConfigComponent implements OnInit, OnDestroy {
           this.previewCabecera = ""
           this.toastr.success(error, "Error")
 
-        }, complete: () => {
-          this._fileinput.nativeElement.value = ''
         }
       })
 
