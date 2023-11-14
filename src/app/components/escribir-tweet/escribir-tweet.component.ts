@@ -85,7 +85,11 @@ export class EscribirTweetComponent implements OnInit, OnDestroy {
       .subscribe({
         next: async (tweet: Tweet) => {
           this._tweet = tweet
+          console.log("entra aqui1")
+          console.log(this._tweet)
+
           if (this._tweet.foto) {
+            console.log("entra aqui2")
             this._postImagenTweetSubscriber = await this.tweetsService
               .postImagenEnTweet(this.currentFile, `${tweet._id}_${this.currentFile?.name?.replace(
                 new RegExp(' ', 'g'),
