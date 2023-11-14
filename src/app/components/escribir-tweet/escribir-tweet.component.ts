@@ -31,7 +31,7 @@ export class EscribirTweetComponent implements OnInit, OnDestroy {
   private _postImagenTweetSubscriber: Subscription;
   private _postTweetSubscriber: Subscription;
 
-  @ViewChild("textoTweet", { static: true }) textoTeet: ElementRef
+  @ViewChild("textoTweet", { static: true }) private _textoTeet: ElementRef<HTMLInputElement>
 
   constructor(private datosService: DatosService, private tweetsService: TweetsService, private dialogRef: MatDialogRef<EscribirTweetComponent>) { }
 
@@ -44,7 +44,7 @@ export class EscribirTweetComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
   }
 
-  adjuntarImagen(event: any) {
+  adjuntarImagen(event: any): void {
     this.message = '';
     this.preview = '';
     this.progress = 0;
@@ -71,30 +71,38 @@ export class EscribirTweetComponent implements OnInit, OnDestroy {
 
   }
 
-  public noPuedeTweetear() {
-    return _.isEqual(this.textoTeet.nativeElement.value, "") && _.isEqual(this.preview, "")
+  public noPuedeTweetear(): boolean {
+    return _.isEqual(this._textoTeet.nativeElement.value.trim(), "") && _.isEqual(this.preview, "")
   }
 
-  async twetear() {
-    this._tweet.texto = this.textoTeet.nativeElement.value
+  async twetear(): Promise<void> {
+    this._tweet.texto = this._textoTeet.nativeElement.value
     this._tweet.foto = this.currentFile ? this.currentFile.name : ""
     this._tweet.usuario = localStorage.getItem("usuario")
 
-    this._postTweetSubscriber = await this.tweetsService.postTweet(this._tweet).subscribe({
-      next: async (tweet: Tweet) => {
-        this._tweet = tweet
-        if (this._tweet.foto) {
-          this._postImagenTweetSubscriber = await this.tweetsService.postImagenEnTweet(this.currentFile, tweet._id + "_" + this.currentFile?.name?.replace(new RegExp(" ", 'g'), "_")).subscribe({
+    this._postTweetSubscriber = await this.tweetsService
+      .postTweet(this._tweet)
+      .subscribe({
+        next: async (tweet: Tweet) => {
+          this._tweet = tweet
+          if (this._tweet.foto) {
+            this._postImagenTweetSubscriber = await this.tweetsService
+              .postImagenEnTweet(this.currentFile, `${tweet._id}_${this.currentFile?.name?.replace(
+                new RegExp(' ', 'g'),
+                '_',
+              )}`).subscribe({
+                next: (a) => {
+                  console.log("hola: " + a)
+                }
+              })
+          }
 
-          })
+        }, complete: async () => {
+          this.datosService.tweetsCargados.unshift(this._tweet)
+          this.datosService.hayTweets = true
+          this.datosService.fechaPosterior = this._tweet.fecha
+          await this.dialogRef.close("enviado")
         }
-
-      }, complete: async () => {
-        this.datosService.tweetsCargados.unshift(this._tweet)
-        this.datosService.hayTweets = true
-        this.datosService.fechaPosterior = this._tweet.fecha
-        await this.dialogRef.close("enviado")
-      }
-    })
+      })
   }
 }
