@@ -93,6 +93,12 @@ export class EscribirTweetComponent implements OnInit, OnDestroy {
               )}`).subscribe({
                 next: (a) => {
                   console.log("hola: " + a)
+                },
+                error: (e) => {
+                  console.log("error: " + e)
+                },
+                complete: () => {
+                  console.log("añadidaaaa")
                 }
               })
           }
