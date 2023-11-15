@@ -1,5 +1,5 @@
 import { enableProdMode, importProvidersFrom, } from '@angular/core';
-import { provi } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter, Route, RouterModule, Routes } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
