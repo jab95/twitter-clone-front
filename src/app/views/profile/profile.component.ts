@@ -247,6 +247,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.fotoPerfil = data.fotoPerfil
         this.fotoCabecera = data.fotoCabecera
         this.descripcion = data.descripcion
+        console.log(data)
 
         if (this._isUsuarioActual()) {
           this.datosService.usuarioActual = { user: localStorage.getItem("usuario"), descripcion: this.descripcion, fotoCabecera: this.fotoCabecera, fotoPerfil: this.fotoPerfil }
