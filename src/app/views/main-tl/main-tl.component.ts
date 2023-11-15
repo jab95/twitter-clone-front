@@ -118,6 +118,8 @@ export class MainTlComponent implements OnInit, OnDestroy {
 
     if (_.isEqual(currentLocation, "main") || _.isEmpty(this.datosService.tweetsCargados)) {
 
+      console.log("ha entradito")
+
       this.loading = true
       const tweets = await lastValueFrom(this.tweetsService.getTwets(this.datosService.contadorCargaTweets)
         .pipe(
@@ -185,6 +187,7 @@ export class MainTlComponent implements OnInit, OnDestroy {
 
   cargarTweetsPosteriores(intervalo: boolean = true): void {
 
+    console.log("ha entradito")
 
     this._tweetsAfterSubscribe = this.tweetsService.getTweetsAfterDate(this.datosService.contadorCargaTweets, this.datosService.fechaPosterior)
       .subscribe({

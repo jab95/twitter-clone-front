@@ -28,7 +28,7 @@ const ROUTES: Routes = [
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
-    importProvidersFrom(BrowserAnimationsModule, ToastrModule.forRoot()),
+    importProvidersFrom(BrowserAnimationsModule, ToastrModule.forRoot(), RouterModule.forRoot(ROUTES, { useHash: true })),
     provideRouter(ROUTES),
     provideHttpClient() //ACTUALIZAR A ANGULAR 15
 

@@ -45,44 +45,44 @@ export class RegistroComponent implements OnInit {
   register(pass: string, user: string): void {
 
 
-    console.log(this.registerForm.get('pass')?.errors)
+    // console.log(this.registerForm.get('pass')?.errors)
 
-    // const usernameRegex = /^[a-zA-Z0-9]+$/g;
-    // const passwordRegex = /(?=.*[A-Z]).{6,}/g;
-
-
-    // if (!usernameRegex.test(user)) {
-    //   this.errorRegistro = true
-    //   this.errorMessage = "El usuario solo permite letras y numeros"
-    // } else {
+    const usernameRegex = /^[a-zA-Z0-9]+$/g;
+    const passwordRegex = /(?=.*[A-Z]).{6,}/g;
 
 
-    //   if (!passwordRegex.test(pass) || /\s/g.test(pass) || pass.length === 0) {
-    //     this.errorRegistro = true
-    //     this.errorMessage = "La contraseña debe de tener al menos 6 caracteres incluida 1 mayuscula."
-
-    //   } else {
-    //     this.errorRegistro = false
-
-    //     this.usuario.pass = pass
-    //     this.usuario.user = user
-    //     this.usuario.fotoPerfil = `${environment.url}/images/profiles/logo-angular.png`;
-    //     this.usuario.fotoCabecera = `${environment.url}/images/headers/back-log.webp`;
-
-    //     lastValueFrom(this.registroService.postUser(this.usuario).pipe(
-    //       catchError(() => {
-    //         this.toastr.error("Registrado", "Ha habido un error con el registro")
-    //         return of("")
-    //       }))
-    //     ).then(() => {
-    //       this.toastr.success("Registrado", "El usuario se registro correctamente")
-    //       this.dialogRef.close()
-    //     }
-    //     )
-    //   }
+    if (!usernameRegex.test(user)) {
+      this.errorRegistro = true
+      this.errorMessage = "El usuario solo permite letras y numeros"
+    } else {
 
 
-    // };
+      if (!passwordRegex.test(pass) || /\s/g.test(pass) || pass.length === 0) {
+        this.errorRegistro = true
+        this.errorMessage = "La contraseña debe de tener al menos 6 caracteres incluida 1 mayuscula."
+
+      } else {
+        this.errorRegistro = false
+
+        this.usuario.pass = pass
+        this.usuario.user = user
+        this.usuario.fotoPerfil = `${environment.url}/images/profiles/logo-angular.png`;
+        this.usuario.fotoCabecera = `${environment.url}/images/headers/back-log.webp`;
+
+        lastValueFrom(this.registroService.postUser(this.usuario).pipe(
+          catchError(() => {
+            this.toastr.error("Registrado", "Ha habido un error con el registro")
+            return of("")
+          }))
+        ).then(() => {
+          this.toastr.success("Registrado", "El usuario se registro correctamente")
+          this.dialogRef.close()
+        }
+        )
+      }
+
+
+    };
 
 
   }
