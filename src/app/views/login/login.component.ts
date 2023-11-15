@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { } from '@angular/common/http';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Usuario } from 'src/app/models/Usuario';

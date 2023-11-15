@@ -9,7 +9,7 @@ import { ConfigService } from '../../services/config.service';
 import { DatosService } from '../../services/datos.service';
 import { LoginService } from '../../services/login.service';
 import * as _ from "lodash"
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
 
 @Component({
   selector: 'app-profile',

@@ -5,7 +5,7 @@ import { first, map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Tweet } from '../../models/Tweet';
 import { LoginService } from '../../services/login.service';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
 import { MatIconModule } from '@angular/material/icon';
 import { DatosService } from 'src/app/services/datos.service';
 import * as _ from "lodash"
