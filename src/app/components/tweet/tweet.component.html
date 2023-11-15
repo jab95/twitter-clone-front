@@ -6,7 +6,9 @@
         <div class="div-texto-tweet w-100">
             <div class="nombre-usuario-tweet">
                 <div id="name-main-profile" class=" mb-3" (click)="goProfile()">
-                    {{tweetActual.usuario}}<span>{{haceCuanto}}</span></div>
+                    {{tweetActual.usuario}}
+                    <!-- <span>{{haceCuanto}}</span> -->
+                </div>
                 <div class="options" [matMenuTriggerFor]="menu" *ngIf="tweetActual.usuario == usuarioActual">
                     <i class="fa-solid fa-ellipsis"></i>
 

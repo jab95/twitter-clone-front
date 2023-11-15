@@ -3,7 +3,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation 
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { Subscription, lastValueFrom } from 'rxjs';
 import { Tweet } from '../../models/Tweet';
 import { DatosService } from '../../services/datos.service';
 import { TweetsService } from '../../services/tweets.service';
@@ -90,20 +90,10 @@ export class EscribirTweetComponent implements OnInit, OnDestroy {
 
           if (this._tweet.foto) {
             console.log("entra aqui2")
-            this._postImagenTweetSubscriber = await this.tweetsService
-              .postImagenEnTweet(this.currentFile, `${tweet._id}_${this.currentFile?.name?.replace(
-                new RegExp(' ', 'g'),
-                '_',
-              )}`).subscribe({
-                next: (a) => {
-                  console.log("hola: " + a)
-                },
-                error: (e) => {
-                  console.log("error: " + e)
-                },
-                complete: () => {
-                  console.log("añadidaaaa")
-                }
+            lastValueFrom(this.tweetsService.postImagenEnTweet(this.currentFile,
+              `${tweet._id}_${this.currentFile?.name?.replace(new RegExp(' ', 'g'), '_',)}`))
+              .then((e) => {
+                console.log("guardada: " + e)
               })
           }
 

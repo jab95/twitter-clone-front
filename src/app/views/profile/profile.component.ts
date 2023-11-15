@@ -188,6 +188,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   cargarTweets(): void {
 
     this.loading = true
+    console.log("el usuario ahora es " + this.username)
     lastValueFrom(this.tweetsService.getTwetsByProfile(this.username, this.contadorCargaTweetsProfile)
       .pipe(
         finalize(() => {
@@ -251,6 +252,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
         if (this._isUsuarioActual()) {
           this.datosService.usuarioActual = { user: localStorage.getItem("usuario"), descripcion: this.descripcion, fotoCabecera: this.fotoCabecera, fotoPerfil: this.fotoPerfil }
+          console.log(this.datosService.usuarioActual)
         }
       })
     }
