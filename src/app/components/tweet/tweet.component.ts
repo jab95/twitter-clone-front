@@ -24,10 +24,10 @@ export class TweetComponent implements OnInit {
   @Input() tweetActual: Tweet;
   imagenTweet: string
   fotoPerfil: string
+  fotoPerfilTweet: string
 
   public imagenAdjuntada: boolean = false
   haceCuanto: string;
-  fotoPerfilTweet: string
   usuarioActual: string
 
   constructor(public userService: LoginService, private router: Router, private dataService: DatosService, private _tweetService: TweetsService) {
@@ -53,25 +53,23 @@ export class TweetComponent implements OnInit {
 
     this.imagenAdjuntada = this.tweetActual.foto ? true : false
     // this.haceCuanto = this.tweetActual.fecha.getTime()
-    let horaTweet: number = Number(new Date(this.tweetActual?.fecha).toLocaleString("es-ES", { hour: 'numeric', hour12: false, timeZone: "UTC" }))
-    let horaActual: number = Number(new Date().toLocaleString("es-ES", { hour: 'numeric', hour12: false, timeZone: "UTC" }))
+    const horaTweet = new Date(this.tweetActual.fecha).getUTCHours();
+    const horaActual = new Date().getUTCHours();
 
     if ((horaActual - horaTweet) >= 24) {
-      this.haceCuanto = new Date(this.tweetActual?.fecha).toLocaleString('es-ES', { timeZone: 'UTC' }).toString().split(",")[0]
-
+      this.haceCuanto = new Date(this.tweetActual.fecha).toLocaleString('es-ES', { timeZone: 'UTC' }).toString().split(',')[0];
     } else {
-      this.haceCuanto = (horaActual - horaTweet).toString() + "h"
-
+      this.haceCuanto = `${horaActual - horaTweet}h`;
     }
 
-    this.imagenTweet = environment.url + "/images/" + this.tweetActual._id + "_" + this.tweetActual.foto.replace(new RegExp(" ", 'g'), "_");
-
+    this.imagenTweet = `${environment.url}/images/${this.tweetActual._id}_${this.tweetActual.foto.replace(new RegExp(' ', 'g'), '_')}`;
 
 
   }
 
   eliminarTweet(_id: string) {
-    this._tweetService.deleteTweet(_id).pipe(first())
+    this._tweetService.deleteTweet(_id)
+      .pipe(first())
       .subscribe(
         {
           next: (a) => {

@@ -1,16 +1,30 @@
-<div class="main-registro text-center">
-    <h1 mat-dialog-title>Registro</h1>
-    <div mat-dialog-content>
+<form [formGroup]="registerForm">
+    <div class="main-registro text-center">
+        <h1 mat-dialog-title>Registro</h1>
+        <div mat-dialog-content>
 
-        <input #user type="text" class="form-control" id="user" placeholder="Usuario">
-        <input #pass type="password" class="form-control mt-2" id="pass" placeholder="Contraseña">
-        <ng-container *ngIf="errorRegistro">
-            <p class="mt-4 text-start texto-error-registro">* {{errorMessage}}</p>
-        </ng-container>
+            <input #user type="text" class="form-control" id="user" placeholder="Usuario" formControlName="user">
+            <input #pass type="password" class="form-control mt-2" id="pass" placeholder="Contraseña"
+                formControlName="pass">
+            <div *ngIf="errorUserObligatorio()">
+                <p class="mt-4 text-start texto-error-registro">* El usuario es obligatorio.</p>
+            </div>
+            <div *ngIf="errorPassObligatoria()">
+                <p class="mt-4 text-start texto-error-registro">* La contraseña es obligatoria.</p>
+            </div>
+            <div *ngIf="errorUserMaxLength()">
+                <p class="mt-4 text-start texto-error-registro">* El usuario debe de tener como maximo 6 caracteres.</p>
+            </div>
+            <div *ngIf="registerForm.hasError('malformato')">
+                <p class="mt-4 text-start texto-error-registro">* La contraseña debe de tener 6
+                    caracteres(letras/números) y 1 mayúscula.</p>
+            </div>
 
+        </div>
+        <div mat-dialog-actions class="d-flex justify-content-between">
+            <button type="button" class="btn btn-primary mt-2 " mat-dialog-close>Cancelar</button>
+            <button type="button" class="btn btn-primary mt-2"
+                (click)="register(pass.value,user.value)">Registrar</button>
+        </div>
     </div>
-    <div mat-dialog-actions class="d-flex justify-content-between">
-        <button type="button" class="btn btn-primary mt-2 " mat-dialog-close>Cancelar</button>
-        <button type="button" class="btn btn-primary mt-2" (click)="hayErrores()">Registrar</button>
-    </div>
-</div>
+</form>

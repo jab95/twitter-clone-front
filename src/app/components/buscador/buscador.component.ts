@@ -17,7 +17,6 @@ import { LoginService } from 'src/app/services/login.service';
 export class BuscadorComponent implements OnInit {
 
 
-  @ViewChild("buscadorUsers", { static: true }) buscadorUsers: ElementRef
 
   public usuariosSearchBar: Usuario[] = []
   usuariosAMostrar: boolean = false
@@ -42,22 +41,22 @@ export class BuscadorComponent implements OnInit {
 
   }
 
-  escribeUsers() {
+  escribeUsers(buscadorUsers: string): void {
 
-    if (_.isEmpty(this.buscadorUsers.nativeElement.value)) {
+    if (_.isEmpty(buscadorUsers)) {
       this.usuariosAMostrar = false
     } else {
       this.usuariosAMostrar = true
-      this._searchTerm$.next(this.buscadorUsers.nativeElement.value)
+      this._searchTerm$.next(buscadorUsers)
     }
   }
 
-  focusOut() {
+  focusOut(): void {
     this.usuariosAMostrar = false
   }
 
 
-  irProfile(usuario) {
+  irProfile(usuario: string): void {
     this.datosService.currentUserSubject.next({ user: usuario })
     this.router.navigate(["profile/", usuario])
   }

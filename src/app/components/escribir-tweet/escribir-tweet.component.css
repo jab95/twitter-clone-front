@@ -1,9 +1,44 @@
-mat-dialog-container {
+.mat-dialog-container {
 
     background-color: #C3ECEA !important;
 
 }
 
-#imagen-adjuntada-tweet {
-    width: 30% !important;
+.imagen-adjuntada-escribir-tweet {
+    width: 30%;
+}
+
+.btn-escribir-tweet,
+.btn-adjuntar {
+    border: 2px solid gray;
+    border-radius: 5px;
+    height: 3rem;
+    background: #C3ECEA;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+
+.btn-escribir-tweet:not(:disabled):hover {
+    background: #b5dddb;
+
+}
+
+.btn-adjuntar {
+    border: 2px solid gray;
+    border-radius: 5px;
+    height: 2rem;
+    width: 2rem;
+    background: #C3ECEA;
+    color: black;
+    display: flex;
+    align-items: center;
+
+}
+
+.btn-adjuntar:hover {
+    background: #b5dddb;
+
 }

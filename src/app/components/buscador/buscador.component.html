@@ -1,6 +1,6 @@
 <main class=" buscador flex-column ">
-    <input #buscadorUsers type="text" class="input-buscador" (focusout)="focusOut()" (input)="escribeUsers()" name=""
-        id="">
+    <input #buscadorUsers type="text" class="input-buscador" (focusout)="focusOut()"
+        (input)="escribeUsers(buscadorUsers.value)" name="" id="">
     <div [className]="usuariosAMostrar ? 'div-search-results' : 'div-search-results2'">
         <div class="usuariosSearch d-flex flex-row" *ngFor="let user of userObservable$ | async"
             (mousedown)="irProfile(user.user)">

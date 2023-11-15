@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Usuario } from '../models/Usuario';
@@ -8,12 +8,12 @@ import { Usuario } from '../models/Usuario';
 })
 export class RegistroService {
 
-  url: string = environment.url
+  private readonly _apiUrl: string = environment.url
   constructor(private http: HttpClient) { }
 
 
   public postUser(usuario: Usuario) {
 
-    return this.http.post(`${this.url}/usuario/add`, usuario)
+    return this.http.post(`${this._apiUrl}/usuario/add`, usuario)
   }
 }

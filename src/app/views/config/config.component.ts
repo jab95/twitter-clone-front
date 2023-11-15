@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, finalize, first, lastValueFrom, map, of, Subscription, switchMap, throwError } from 'rxjs';
+import { catchError, finalize, first, lastValueFrom, map, of, Subscription, switchMap, } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HeaderComponent } from '../../components/header/header.component';
-import { init, waitForInit } from '../../directivas/init';
 import { Usuario } from '../../models/Usuario';
 import { ConfigService } from '../../services/config.service';
 import { DatosService } from '../../services/datos.service';
@@ -21,27 +20,24 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class ConfigComponent implements OnInit, OnDestroy {
 
-  private _selectedFiles: any;
-  preview: string = "";
-  previewCabecera: string = "";
-  private _currentFile: File;
-
-  @ViewChild("fileInput", { static: true }) private _fileinput: ElementRef
-
+  private _selectedFile: File;
   private _changeUserSubscriber: Subscription;
   private _changeDescSubscriber: Subscription;
   private _postProfileSubscriber: Subscription;
   private _changeProfileSubscriber: Subscription;
-  private _imagenGris: string = "../../../assets/gray.png"
+  private readonly _imagenGris: string = "../../../assets/gray.png"
+
   loadingHeader: boolean;
   loadingProfile: boolean;
+  preview: string = "";
+  previewCabecera: string = "";
 
-  constructor(private configService: ConfigService, private toastr: ToastrService, private userService: LoginService, private datosService: DatosService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly toastr: ToastrService,
+    private readonly userService: LoginService,
+    private readonly datosService: DatosService) { }
 
-    localStorage.setItem("currentLocation", "config")
-    this.preview = this.datosService.usuarioActual.fotoPerfil ?? this._imagenGris
-    this.previewCabecera = this.datosService.usuarioActual.fotoCabecera ?? this._imagenGris
-  }
 
 
 
@@ -54,24 +50,27 @@ export class ConfigComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    localStorage.setItem("currentLocation", "config")
+    this.preview = this.datosService.usuarioActual.fotoPerfil ?? this._imagenGris
+    this.previewCabecera = this.datosService.usuarioActual.fotoCabecera ?? this._imagenGris
     this.datosService.templateActual = "config"
+
     if (_.isEqual(this.preview, this._imagenGris) || _.isEqual(this.previewCabecera, this._imagenGris)) {
       this._getFotosUsuario();
     }
 
   }
 
-  changeUsername(newValue) {
+  changeUsername(newValue: string): void {
 
     if (newValue) {
       this.configService.changeUsername(localStorage.getItem("usuario"), newValue)
-        .then((dat: Usuario) => {
+        .then((dat) => {
           this.toastr.success("Cambiado", "El usuario se cambio correctamente")
-          this.datosService.tweetsCargados.filter(t => t.usuario == localStorage.getItem("usuario")).map(t => t.usuario = dat.user)
-
           localStorage.setItem("usuario", dat.user)
         })
-        .catch(error => {
+        .catch(() => {
           this.toastr.error("Error", "Ha habido un error al cambiar el usuario")
 
         })
@@ -79,79 +78,67 @@ export class ConfigComponent implements OnInit, OnDestroy {
 
   }
 
-  changeDescription(newValue) {
+  changePassword(newValue: string): void {
 
     if (newValue) {
-      this.configService.changeDescription(localStorage.getItem("usuario"), newValue).then(data =>
-        this.toastr.success("Cambiado", "La descripcion se cambió correctamente")
+      this.configService.changePassword(localStorage.getItem("usuario"), newValue)
+        .then(() => {
+          this.toastr.success("Cambiado", "La contraseña se cambio correctamente")
+        })
+        .catch(() => {
+          this.toastr.error("Error", "Ha habido un error al cambiar la contraseña")
 
-      ).catch(error => {
-        this.toastr.error("Error", "Ha habido un error al cambiar la descripción")
-      })
+        })
+    }
+
+  }
+
+  changeDescription(newValue: string): void {
+
+    if (newValue) {
+      this.configService.changeDescription(localStorage.getItem("usuario"), newValue)
+        .then(() =>
+          this.toastr.success("Cambiado", "La descripcion se cambió correctamente")
+
+        ).catch(() => {
+          this.toastr.error("Error", "Ha habido un error al cambiar la descripción")
+        })
     }
 
   }
 
 
-  async adjuntarImagen(event: any) {
-    this.preview = '';
-    this._selectedFiles = event.target.files;
+  async adjuntarImagen(event: any, tipo: 'perfil' | 'cabecera'): Promise<void> {
 
-    if (this._selectedFiles) {
+    const input = event.target as HTMLInputElement;
 
-      const file: File | null = this._selectedFiles.item(0);
+    if (!input.files?.length) return;
 
-      if (file) {
 
-        this.preview = '';
-        this._currentFile = file;
+    if (this.checkErrorsFileTypes(input.files)) return
 
-        const reader = new FileReader();
+    this._selectedFile = input.files[0];
 
-        reader.onload = (e: any) => {
-          this.preview = e.target.result;
-        };
+    const reader = new FileReader();
 
-        await reader.readAsDataURL(this._currentFile);
-        await this.cambiaPerfil(this._currentFile)
+    reader.onload = (e) => {
+      tipo === "perfil" ? this.preview = e.target?.result as string : this.previewCabecera = e.target?.result as string
+    };
 
-      }
+    reader.readAsDataURL(this._selectedFile);
+
+    if (_.isEqual(tipo, 'perfil')) {
+      await this.cambiaPerfil(this._selectedFile);
+    } else {
+      await this.cambiaImagenCabecera(this._selectedFile);
     }
 
   }
 
-
-  async adjuntarImagenCabecera(event: any) {
-    this.previewCabecera = '';
-    this._selectedFiles = event.target.files;
-
-    if (this._selectedFiles) {
-
-      const file: File | null = this._selectedFiles.item(0);
-
-      if (file) {
-
-        this.previewCabecera = '';
-        this._currentFile = file;
-
-        const reader = new FileReader();
-
-        reader.onload = (e: any) => {
-          this.previewCabecera = e.target.result;
-        };
-
-        await reader.readAsDataURL(this._currentFile);
-        await this.cambiaImagenCabecera(this._currentFile)
-
-      }
-    }
-
-  }
-
-  async cambiaPerfil(file: File) {
+  async cambiaPerfil(file: File): Promise<void> {
 
 
-    const urlNewProfile = `${environment.url}/images/profiles/profile-${localStorage.getItem("usuario")}.${file.type.split("/")[1]}`
+    let urlNewProfile = `${environment.url}/images/profiles/profile-${localStorage.getItem("usuario")}.${file.type.split("/")[1]}?t=${Date.now()}`
 
     //hacemos uso de rxjs para hacer unas pruebas
 
@@ -160,24 +147,25 @@ export class ConfigComponent implements OnInit, OnDestroy {
       .pipe(
         first(),
         catchError(() => {
-          this.toastr.success("Error", "Ha habido un error al cambiar la foto de perfil")
+          this.toastr.error("Error", "Ha habido un error al cambiar la foto de perfil")
           return of(null)
         }),
         switchMap(() => {
           return this.configService.changeProfileImage(localStorage.getItem("usuario"), urlNewProfile)
         }),
-        map((val: Usuario) => {
+        map((val) => {
           return val.user
         })
         , finalize(() => {
           this.loadingProfile = false
-          this._fileinput.nativeElement.value = ''
         })
 
       ).subscribe({
         next: (val: string) => {
           if (!_.isNil(val)) {
-            this.datosService.usuarioActual.fotoPerfil = urlNewProfile
+            console.log("en config: " + urlNewProfile)
+            const newu = urlNewProfile.replace("\?.*$", '')
+            this.datosService.usuarioActual.fotoPerfil = newu
 
             localStorage.setItem("usuario", val)
             this.toastr.success("Cambiado", "La foto de perfil se cambió correctamente")
@@ -187,10 +175,10 @@ export class ConfigComponent implements OnInit, OnDestroy {
 
   }
 
-  async cambiaImagenCabecera(file: File) {
+  async cambiaImagenCabecera(file: File): Promise<void> {
 
 
-    const urlNewCabecera = `${environment.url}/images/headers/header-${localStorage.getItem("usuario")}.${file.type.split("/")[1]}`
+    const urlNewCabecera = `${environment.url}/images/headers/header-${localStorage.getItem("usuario")}.${file.type.split("/")[1]}?t=${Date.now()}`
 
     //hacemos uso de rxjs para hacer unas pruebas
 
@@ -199,53 +187,65 @@ export class ConfigComponent implements OnInit, OnDestroy {
       .pipe(
         first(),
         catchError((e) => {
-          return throwError(() => "Ha habido un error al cambiar la imagen de cabecera")
+          this.toastr.error("Error", "Ha habido un error al cambiar la imagen de cabecera")
+          return of(null)
         }),
         switchMap(() => {
 
           return this.configService.changeHeaderImage(localStorage.getItem("usuario"), urlNewCabecera)
         }),
-        map((val: Usuario) => {
+        map((val) => {
 
           return val.user
         })
         , finalize(() => {
           this.loadingHeader = false
-          this._fileinput.nativeElement.value = ''
         })
 
       ).subscribe({
 
-        next: (val: string | null) => {
+        next: (val: string) => {
 
           if (!_.isNil(val)) {
             localStorage.setItem("usuario", val)
             this.toastr.success("Cambiado", "La imagen de cabecera se cambió correctamente")
-            this.datosService.usuarioActual.fotoCabecera = urlNewCabecera
+            const newu = urlNewCabecera.replace("\?.*$", '')
+            this.datosService.usuarioActual.fotoCabecera = newu
           }
-        }, error: (error) => {
-          this.previewCabecera = ""
-          this.toastr.success(error, "Error")
-
         }
       })
 
   }
 
-  // @init
   _getFotosUsuario() {
 
+    lastValueFrom(this.userService.findUserByName(localStorage.getItem("usuario")))
+      .then((data: Usuario) => {
 
+        this.preview = data.fotoPerfil || this._imagenGris
+        this.previewCabecera = data.fotoCabecera || this._imagenGris
+        this.datosService.usuarioActual.fotoPerfil = this.preview
+        this.datosService.usuarioActual.fotoCabecera = this.previewCabecera
 
-    lastValueFrom(this.userService.findUserByName(localStorage.getItem("usuario"))).then((data: Usuario) => {
-
-      this.preview = data.fotoPerfil
-      this.previewCabecera = data.fotoCabecera
-      this.datosService.usuarioActual.fotoPerfil = this.preview
-      this.datosService.usuarioActual.fotoCabecera = this.previewCabecera
-
-    })
+      })
 
   }
+
+  checkErrorsFileTypes(files: FileList): boolean {
+
+    let error: boolean = false;
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+    if (!allowedTypes.includes(files[0].type)) {
+      // reject the file
+      this.toastr.error("Error", "Solo ficheros de tipo 'jpeg', 'jpg' o 'png' estan permitidos")
+      error = true;
+    }
+
+
+    return error
+
+  }
+
 
 }

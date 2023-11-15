@@ -24,19 +24,20 @@ import { LoginService } from '../../services/login.service';
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
+  errorLogin: boolean
 
-  @ViewChild('pass', { static: true }) pass!: ElementRef;
-  @ViewChild('user', { static: true }) user!: ElementRef;
+  private _loginSubscriber$: Subscription;
 
-  public errorLogin: boolean = false
-
-  private _loginSubscriber: Subscription;
-
-
-  constructor(private login: LoginService, private dialog: MatDialog, private router: Router, private datosService: DatosService) { }
+  constructor(
+    private readonly loginService: LoginService,
+    private readonly dialog: MatDialog,
+    private readonly router: Router,
+    private readonly datosService: DatosService) {
+    this.errorLogin = false
+  }
 
   ngOnDestroy(): void {
-    this._loginSubscriber?.unsubscribe()
+    this._loginSubscriber$?.unsubscribe()
   }
 
   ngOnInit(): void {
@@ -44,30 +45,31 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   }
 
-  acceder() {
+  acceder(user: string, pass: string): void {
 
 
-    this._loginSubscriber = this.login.findUser(this.user.nativeElement.value, this.pass.nativeElement.value).subscribe({
-      next: (data: Usuario) => {
-        if (data) {
-          this.errorLogin = false
-          localStorage.setItem("usuario", data.user)
-          this.datosService.profileUser = data.user
-          this.datosService.usuarioActual = data
-          this.router.navigate(['home'])
-        } else {
-          this.errorLogin = true
+    this._loginSubscriber$ = this.loginService.findUser(user, pass)
+      .subscribe({
+        next: (data: Usuario) => {
+          if (data) {
+            this.errorLogin = false
+            localStorage.setItem("usuario", data.user)
+            this.datosService.profileUser = data.user
+            this.datosService.usuarioActual = data
+            this.router.navigate(['home'])
+          } else {
+            this.errorLogin = true
+          }
+        }, error: () => {
+
+        }, complete: () => {
+
         }
-      }, error: () => {
-
-      }, complete: () => {
-
-      }
-    })
+      })
   }
 
 
-  async openDialog() {
+  openDialog(): void {
 
     const dialogRef = this.dialog.open(RegistroComponent, { disableClose: true });
 

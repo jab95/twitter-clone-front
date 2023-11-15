@@ -1,5 +1,10 @@
 @import url("../node_modules/@angular/material/prebuilt-themes/indigo-pink.css");
 
+@font-face {
+  font-family: 'Satoshi-Regular';
+  src: url('./assets/Author_Complete/Author_Complete/Fonts/OTF/Author-Regular.otf');
+}
+
 html,
 body {
   min-height: 100%;
@@ -7,6 +12,7 @@ body {
   margin: 0;
   background-color: #C3ECEA;
   width: 100vw;
+  font-family: 'Satoshi-Regular';
 }
 
 body {
@@ -18,4 +24,14 @@ body {
 .texto-error-registro {
   font-size: 0.8rem;
   color: red;
+}
+
+.input-config {
+  background-color: transparent;
+  border-color: gray;
+}
+
+.input-config:focus {
+  background-color: transparent;
+  border-color: gray;
 }

@@ -40,15 +40,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
   }
 
-  irArriba() {
+  irArriba(): void {
 
 
     if (this.datosService.estaEnMain) {
 
       this._countTweetsSubscriber = this._tweetsService.getCountTweets().subscribe({
-        next: (count) => {
+        next: (count: number) => {
 
-          if (count == 0) {
+          if (count === 0) {
             this.datosService.hayTweets = false
             this.datosService.tweetsCargados = []
             this.datosService.contadorCargaTweets = 1
@@ -62,7 +62,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.datosService.maximosDocs = tweets.totalDocs
 
 
-          if (tweets.length != 0) {
+          if (tweets.length) {
             this.datosService.hayTweetsPorVerMain = false
 
             this._tweets = tweets
@@ -72,16 +72,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
         }, complete: () => {
 
-          if (this._tweets && (this._tweets.length != 0 && (this._tweets.length % 4 == 0))) {
+          if (this._tweets && (this._tweets?.length % 4 == 0)) {
             this.datosService.contadorCargaTweets++
           }
 
-          if (this.datosService.hayTweets) this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados)?.fecha
-          window.scroll({
-            top: 0,
-            left: 0,
-          });
+          if (this.datosService.hayTweets) {
+            this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados)?.fecha
+            window.scroll({
+              top: 0,
+              left: 0,
+            });
 
+          }
         }
       })
     }

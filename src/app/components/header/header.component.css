@@ -23,10 +23,7 @@ main {
 }
 
 
-.col1:hover,
-.col2:hover,
-.col3:hover,
-.col4:hover {
+:is(.header-main) .header-icon:hover {
     background-color: lightgrey;
     cursor: pointer;
 }

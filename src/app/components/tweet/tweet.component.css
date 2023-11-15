@@ -17,8 +17,8 @@ main {
 
 }
 
-#imagen-adjuntada-tweet {
-    width: 50% !important;
+.imagen-adjuntada-tweet {
+    width: 50%;
     cursor: pointer;
     scale: calc(1);
 }

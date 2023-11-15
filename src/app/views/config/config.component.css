@@ -7,8 +7,8 @@ main {
 }
 
 .card {
-    background: #ACD1CF !important;
-    width: fit-content !important;
+    background: #ACD1CF;
+    width: fit-content;
 }
 
 .tl {
@@ -29,11 +29,11 @@ main {
     cursor: pointer;
 }
 
-#imagen-adjuntada-tweet {
+.preview-img-config {
 
 
-    width: 80px !important;
-    height: 80px !important;
+    width: 80px;
+    height: 80px;
 }
 
 .tercer {
@@ -49,9 +49,38 @@ main {
 
 .btn-change {
     width: 100px;
+
 }
+
+.btn-change-style {
+    border: 2px solid gray;
+    height: 2rem;
+    background: #C3ECEA;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 
 :host ::ng-deep .mat-progress-spinner circle,
 .mat-spinner circle {
     stroke: #529894
+}
+
+.btn-change-web-style {
+    border: 2px solid gray;
+    width: 100%;
+    height: 2rem;
+    background: #C3ECEA;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-change-web-style:hover,
+.btn-change-style:hover {
+
+    background: #b5dddb;
 }

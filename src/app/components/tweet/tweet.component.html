@@ -6,7 +6,7 @@
         <div class="div-texto-tweet w-100">
             <div class="nombre-usuario-tweet">
                 <div id="name-main-profile" class=" mb-3" (click)="goProfile()">
-                    {{tweetActual.usuario}}</div>
+                    {{tweetActual.usuario}}<span>{{haceCuanto}}</span></div>
                 <div class="options" [matMenuTriggerFor]="menu" *ngIf="tweetActual.usuario == usuarioActual">
                     <i class="fa-solid fa-ellipsis"></i>
 
@@ -16,7 +16,7 @@
             </div>
             <p class="texto-tweet-actual"> {{tweetActual.texto}} </p>
             <ng-container *ngIf="imagenAdjuntada">
-                <img (click)="goToUrl()" id="imagen-adjuntada-tweet" class="mb-3" [src]="imagenTweet" alt="">
+                <img (click)="goToUrl()" class="mb-3 imagen-adjuntada-tweet" [src]="imagenTweet" alt="">
             </ng-container>
         </div>
         <div class="div-options">

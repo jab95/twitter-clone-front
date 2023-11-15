@@ -1,8 +1,3 @@
-main {
-    background-color: #C3ECEA;
-
-}
-
 .logo-main {
     width: 50px;
 }
@@ -37,6 +32,11 @@ main {
     margin-left: 20px;
     margin-top: 15px;
     font-weight: bold;
+    font-size: 1.75em;
+}
+
+.profile-username::first-letter {
+    text-transform: ca;
 }
 
 .profile-desc {
@@ -47,4 +47,45 @@ main {
 :host ::ng-deep .mat-progress-spinner circle,
 .mat-spinner circle {
     stroke: #92d1ce
+}
+
+.texto-nuevos-tweets {
+    color: green;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    border-top: thin solid gray;
+}
+
+.texto-no-twteets {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    border-top: thin solid gray;
+}
+
+
+.texto-nuevos-tweets:hover {
+    color: rgb(1, 94, 1);
+    cursor: pointer;
+}
+
+
+.btn-before-tweet {
+    border: medium solid gray;
+    border-radius: 5px;
+    height: 3rem;
+    background: #C3ECEA;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.btn-before-tweet:hover {
+    background: #b5dddb;
+
 }

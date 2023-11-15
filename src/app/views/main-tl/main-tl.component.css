@@ -1,5 +1,4 @@
 main {
-    background-color: #C3ECEA;
     height: fit-content;
     position: relative;
     z-index: 9;
@@ -22,6 +21,7 @@ main {
 }
 
 
+
 .texto-nuevos-tweets:hover {
     color: rgb(1, 94, 1);
     cursor: pointer;
@@ -30,4 +30,32 @@ main {
 :host ::ng-deep .mat-progress-spinner circle,
 .mat-spinner circle {
     stroke: #92d1ce
+}
+
+.btn-new-tweet,
+.btn-before-tweet {
+    border: 2px solid gray;
+    border-radius: 5px;
+    height: 3rem;
+    background: #C3ECEA;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-before-tweet:hover,
+.btn-new-tweet:hover {
+
+    background: #b5dddb;
+}
+
+.btn-before-tweet {
+    padding: 10px;
+
+}
+
+.btn-new-tweet {
+    width: 5rem;
+
 }

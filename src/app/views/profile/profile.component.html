@@ -5,7 +5,7 @@
 
     <app-header></app-header>
 
-    <div class="profile mx-auto mt-5  bg-info text-dark shadow-lg">
+    <div class="profile mx-auto mt-5   text-dark shadow-sm">
         <div class="w-100 profile-header">
             <img [src]="fotoCabecera" class="w-100 h-100" alt="">
             <img [src]="fotoPerfil" alt="" class="img-profile ">
@@ -16,22 +16,23 @@
             <mat-progress-spinner diameter="70" color="primary" mode="indeterminate">
             </mat-progress-spinner>
         </div>
+
         <div *ngIf="datosService.hayTweets && !loading; then thenBlock else elseBlock"></div>
         <ng-template #thenBlock>
-            <div style="width: 100%;" (click)="cargarTweetsPosteriores(null)">
-                <h5 *ngIf="datosService.hayTweetsPorVerProfile" class="texto-nuevos-tweets text-center mt-2">Mostrar
+            <div style="width: 100%;" (click)="cargarTweetsPosteriores(false)">
+                <h5 *ngIf="datosService.hayTweetsPorVerProfile" class="texto-nuevos-tweets  mt-2 ">Mostrar
                     twoots nuevos</h5>
                 <app-tweet *ngFor=" let i of tweetsCargadosProfile" [tweetActual]="i"></app-tweet>
             </div>
         </ng-template>
         <ng-template #elseBlock>
-            <h3 *ngIf="!loading" class="mt-5 text-center">No hay Twoots</h3>
+            <h3 *ngIf="!loading" class="p-3 texto-no-twteets ">No hay Twoots</h3>
         </ng-template>
     </div>
 
-    <div *ngIf="datosService.hayTweets" class="mt-2  d-flex justify-content-center">
-        <button type="button" (click)="cargarTweetsAnteriores()" class="btn rounded-pill btn-lg btn-primary mb-2">Cargar
-            anteriores...</button>
+    <div *ngIf="datosService.hayTweets" class="mt-3  d-flex justify-content-center">
+        <button type="button" (click)="cargarTweetsAnteriores()" class="btn-before-tweet mb-2">Cargar
+            anteriores ...</button>
     </div>
 
 </main>

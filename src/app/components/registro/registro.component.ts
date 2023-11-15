@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -11,7 +12,7 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatButtonModule, MatDialogModule, ReactiveFormsModule],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.css'],
   encapsulation: ViewEncapsulation.None,
@@ -20,55 +21,100 @@ import { environment } from 'src/environments/environment';
 export class RegistroComponent implements OnInit {
 
   public errorRegistro: boolean = false
-
   usuario: Usuario = new Usuario()
-
-
-  @ViewChild('pass', { static: true }) pass!: ElementRef;
-  @ViewChild('user', { static: true }) user!: ElementRef;
-
   errorMessage: string;
 
-  constructor(private registroService: RegistroService, private toastr: ToastrService, private dialogRef: MatDialogRef<RegistroComponent>) { }
+  registerForm: FormGroup
+
+  constructor(private fb: FormBuilder, private readonly registroService: RegistroService, private toastr: ToastrService, private dialogRef: MatDialogRef<RegistroComponent>) { }
 
   ngOnInit(): void {
 
+    this.registerForm = this.inintForm()
+
   }
 
-  hayErrores() {
+  inintForm(): FormGroup {
+    return this.fb.group({
+      user: ['', [Validators.required, Validators.maxLength(6), Validators.pattern("^[a-zA-Z0-9]+$"), Validators.pattern("(?=.*[A-Z])")]],
+      pass: ['', [Validators.required, Validators.maxLength(6), Validators.pattern("(?=.*[A-Z])"), this.errorPassMalFormato]],
 
-    if (!/^[a-zA-Z0-9]+$/g.test(this.user.nativeElement.value)) {
-      this.errorRegistro = true
-      this.errorMessage = "El usuario solo permite letras y numeros"
-    } else {
+    })
+  }
 
-
-      if (!/(?=.*[A-Z]).{6,}/g.test(this.pass.nativeElement.value) || /\s/g.test(this.pass.nativeElement.value) || this.pass.nativeElement.value.length == 0) {
-        this.errorRegistro = true
-        this.errorMessage = "La contraseña debe de tener al menos 6 caracteres incluida 1 mayuscula."
-      } else {
-        this.errorRegistro = false
-
-        this.usuario.pass = this.pass.nativeElement.value
-        this.usuario.user = this.user.nativeElement.value
-        this.usuario.fotoPerfil = environment.url + "/images/profiles/logo-angular.png"
-        this.usuario.fotoCabecera = environment.url + "/images/headers/back-log.webp"
-
-        lastValueFrom(this.registroService.postUser(this.usuario).pipe(
-          catchError(() => {
-            this.toastr.error("Registrado", "Ha habido un error con el registro")
-            return of("")
-          }))
-        ).then(() => {
-          this.toastr.success("Registrado", "El usuario se registro correctamente")
-          this.dialogRef.close()
-        }
-        )
-      }
+  register(pass: string, user: string): void {
 
 
-    };
+    console.log(this.registerForm.get('pass')?.errors)
 
+    // const usernameRegex = /^[a-zA-Z0-9]+$/g;
+    // const passwordRegex = /(?=.*[A-Z]).{6,}/g;
+
+
+    // if (!usernameRegex.test(user)) {
+    //   this.errorRegistro = true
+    //   this.errorMessage = "El usuario solo permite letras y numeros"
+    // } else {
+
+
+    //   if (!passwordRegex.test(pass) || /\s/g.test(pass) || pass.length === 0) {
+    //     this.errorRegistro = true
+    //     this.errorMessage = "La contraseña debe de tener al menos 6 caracteres incluida 1 mayuscula."
+
+    //   } else {
+    //     this.errorRegistro = false
+
+    //     this.usuario.pass = pass
+    //     this.usuario.user = user
+    //     this.usuario.fotoPerfil = `${environment.url}/images/profiles/logo-angular.png`;
+    //     this.usuario.fotoCabecera = `${environment.url}/images/headers/back-log.webp`;
+
+    //     lastValueFrom(this.registroService.postUser(this.usuario).pipe(
+    //       catchError(() => {
+    //         this.toastr.error("Registrado", "Ha habido un error con el registro")
+    //         return of("")
+    //       }))
+    //     ).then(() => {
+    //       this.toastr.success("Registrado", "El usuario se registro correctamente")
+    //       this.dialogRef.close()
+    //     }
+    //     )
+    //   }
+
+
+    // };
+
+
+  }
+
+  errorUserObligatorio(): boolean {
+
+    return this.registerForm?.get('user')?.touched && this.registerForm?.get('user')?.errors['required']
+
+  }
+
+  errorPassObligatoria(): boolean {
+
+    return this.registerForm?.get('pass')?.touched && this.registerForm?.get('pass')?.errors['required']
+
+  }
+
+  errorUserMaxLength(): boolean {
+
+    return this.registerForm?.get('user')?.touched && this.registerForm?.get('user')?.errors['maxlength']
+
+  }
+
+  errorPassMalFormato(control: FormControl) {
+
+    let isValid: boolean = false
+
+    console.log("a")
+
+    isValid = control?.touched && (control?.errors['maxlength'] || control?.errors['pattern'] || /\s/g.test(control?.value))
+    console.log(isValid)
+
+    return isValid ? { "malformato": true } : null
 
   }
 

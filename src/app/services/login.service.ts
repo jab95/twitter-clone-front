@@ -9,22 +9,22 @@ import { Usuario } from '../models/Usuario';
 })
 export class LoginService {
 
-  _url: string = environment.url
+  private readonly _apiUrl: string = `${environment.url}/usuario`
 
   constructor(private http: HttpClient) { }
 
   public findUser(user: string, pass: string) {
-    return this.http.get<Usuario>(`${this._url}/usuario/get?user=${user}&pass=${pass}`)
+    return this.http.get<Usuario>(`${this._apiUrl}/get?user=${user}&pass=${pass}`)
 
   }
 
   public findUserByName(user: string) {
-    return this.http.get<Usuario>(`${this._url}/usuario/getByName?user=${user}`)
+    return this.http.get<Usuario>(`${this._apiUrl}/getByName?user=${user}`)
 
   }
 
   public findUsersFilterByName(user: string) {
-    return this.http.get<Usuario[]>(`${this._url}/usuario/getFiltersByName?user=${user}`)
+    return this.http.get<Usuario[]>(`${this._apiUrl}/getFiltersByName?user=${user}`)
 
   }
 }

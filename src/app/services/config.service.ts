@@ -9,7 +9,7 @@ import { Usuario } from '../models/Usuario';
 })
 export class ConfigService {
 
-  url: string = environment.url
+  private readonly _apiUrl: string = `${environment.url}/usuario`
 
   constructor(private http: HttpClient) { }
 
@@ -17,23 +17,30 @@ export class ConfigService {
   public changeUsername(oldValue: string, newValue: string) {
 
 
-    return lastValueFrom(this.http.put(`${this.url}/usuario/changeUsername`, { oldValue: oldValue, newValue: newValue }))
+    return lastValueFrom(this.http.put<Usuario>(`${this._apiUrl}/changeUsername`, { oldValue: oldValue, newValue: newValue }))
+  }
+
+
+  public changePassword(user: string, newValue: string) {
+
+
+    return lastValueFrom(this.http.put<Usuario>(`${this._apiUrl}/changePassword`, { user: user, newValue: newValue }))
   }
 
   public changeDescription(user: string, desc: string) {
 
 
-    return lastValueFrom(this.http.put(`${this.url}/usuario/changeDescription`, { user: user, descripcion: desc }))
+    return lastValueFrom(this.http.put<Usuario>(`${this._apiUrl}/changeDescription`, { user: user, descripcion: desc }))
   }
 
   public changeProfileImage(user: string, newValue: string) {
 
-    return this.http.put(`${this.url}/usuario/changeProfile`, { user: user, newProfile: newValue })
+    return this.http.put<Usuario>(`${this._apiUrl}/changeProfile`, { user: user, newProfile: newValue })
   }
 
   public changeHeaderImage(user: string, newValue: string) {
 
-    return this.http.put(`${this.url}/usuario/changeHeader`, { user: user, newHeader: newValue })
+    return this.http.put<Usuario>(`${this._apiUrl}/changeHeader`, { user: user, newHeader: newValue })
   }
 
   public postNewImagenProfile(imagen: Blob, filename: string) {
@@ -42,7 +49,7 @@ export class ConfigService {
 
     profileData.append("image", imagen, filename)
 
-    return this.http.post(`${this.url}/usuario/addImageProfile`, profileData)
+    return this.http.post(`${this._apiUrl}/addImageProfile`, profileData)
   }
 
 
@@ -52,7 +59,7 @@ export class ConfigService {
 
     headerData.append("image", imagen, filename)
 
-    return this.http.post(`${this.url}/usuario/addImageHeader`, headerData)
+    return this.http.post(`${this._apiUrl}/addImageHeader`, headerData)
   }
 
 
