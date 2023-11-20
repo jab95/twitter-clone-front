@@ -188,7 +188,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   cargarTweets(): void {
 
     this.loading = true
-    console.log("el usuario ahora es " + this.username)
     lastValueFrom(this.tweetsService.getTwetsByProfile(this.username, this.contadorCargaTweetsProfile)
       .pipe(
         finalize(() => {
@@ -241,21 +240,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.contadorCargaTweetsProfile = 1
   }
 
-  private _obtieneDatosPerfil() {
-    if (_.isEqual(this.fotoPerfil, this._fondoGris) || _.isEqual(this.fotoCabecera, this._fondoGris)) {
-      lastValueFrom(this.userService.findUserByName(this.username)).then((data: Usuario) => {
+  private async _obtieneDatosPerfil() {
+    // if (_.isEqual(this.fotoPerfil, this._fondoGris) || _.isEqual(this.fotoCabecera, this._fondoGris)) {
+    await lastValueFrom(this.userService.findUserByName(this.username)).then((data: Usuario) => {
 
-        this.fotoPerfil = data.fotoPerfil
-        this.fotoCabecera = data.fotoCabecera
-        this.descripcion = data.descripcion
-        console.log(data)
+      this.fotoPerfil = data.fotoPerfil
+      this.fotoCabecera = data.fotoCabecera
+      this.descripcion = data.descripcion
 
-        if (this._isUsuarioActual()) {
-          this.datosService.usuarioActual = { user: localStorage.getItem("usuario"), descripcion: this.descripcion, fotoCabecera: this.fotoCabecera, fotoPerfil: this.fotoPerfil }
-          console.log(this.datosService.usuarioActual)
-        }
-      })
-    }
+      if (this._isUsuarioActual()) {
+        this.datosService.usuarioActual = { user: localStorage.getItem("usuario"), descripcion: this.descripcion, fotoCabecera: this.fotoCabecera, fotoPerfil: this.fotoPerfil }
+      }
+    })
+    // }
   }
 
 }

@@ -35,3 +35,13 @@ body {
   background-color: transparent;
   border-color: gray;
 }
+
+.register-dialog {
+  background: url("./assets/back-log.webp") !important;
+  border-radius: 5%;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background: url("./assets/back-log.webp") !important;
+
+}

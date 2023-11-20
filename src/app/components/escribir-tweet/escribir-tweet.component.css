@@ -1,3 +1,9 @@
+:host ::ng-deep {
+    background: #fff !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+}
+
 .mat-dialog-container {
 
     background-color: #C3ECEA !important;
@@ -17,7 +23,7 @@
     color: black;
     display: flex;
     align-items: center;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 

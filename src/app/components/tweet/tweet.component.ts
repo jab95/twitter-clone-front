@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { first, map, Observable } from 'rxjs';
+import { first, lastValueFrom, map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Tweet } from '../../models/Tweet';
 import { LoginService } from '../../services/login.service';
@@ -40,18 +40,18 @@ export class TweetComponent implements OnInit {
   ngOnInit(): void {
 
 
+    this.imagenAdjuntada = this.tweetActual.foto ? true : false
 
-    this.userService.findUserByName(this.tweetActual.usuario)
+    lastValueFrom(this.userService.findUserByName(this.tweetActual.usuario)
       .pipe(
         first(),
         map((usuario) => {
           return usuario.fotoPerfil
         }))
-      .subscribe((perfil) => {
-        this.fotoPerfilTweet = perfil
-      })
+    ).then((perfil) => {
+      this.fotoPerfilTweet = perfil
+    })
 
-    this.imagenAdjuntada = this.tweetActual.foto ? true : false
     // this.haceCuanto = this.tweetActual.fecha.getTime()
     const horaTweet = new Date(this.tweetActual.fecha).getUTCHours();
     const horaActual = new Date().getUTCHours();

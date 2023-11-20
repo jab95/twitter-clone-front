@@ -100,7 +100,7 @@ export class MainTlComponent implements OnInit, OnDestroy {
 
   async twetear(): Promise<void> {
 
-    const dialogRef = this.dialog.open(EscribirTweetComponent, { width: "500px", maxHeight: "fit-content" });
+    const dialogRef = this.dialog.open(EscribirTweetComponent, { panelClass: 'escribir-tweet-dialog', width: "500px", maxHeight: "fit-content" });
 
     dialogRef.afterClosed().subscribe(result => {
       if (_.isEqual(result, "enviado")) {

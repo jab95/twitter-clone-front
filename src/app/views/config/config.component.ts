@@ -66,9 +66,11 @@ export class ConfigComponent implements OnInit, OnDestroy {
 
     if (newValue) {
       this.configService.changeUsername(localStorage.getItem("usuario"), newValue)
-        .then((dat) => {
+        .then((dat: Usuario) => {
           this.toastr.success("Cambiado", "El usuario se cambio correctamente")
           localStorage.setItem("usuario", dat.user)
+          this.datosService.usuarioActual = dat
+          this.datosService.setDataProfile()
         })
         .catch(() => {
           this.toastr.error("Error", "Ha habido un error al cambiar el usuario")
@@ -93,10 +95,10 @@ export class ConfigComponent implements OnInit, OnDestroy {
 
   }
 
-  changeDescription(newValue: string): void {
+  async changeDescription(newValue: string): Promise<void> {
 
     if (newValue) {
-      this.configService.changeDescription(localStorage.getItem("usuario"), newValue)
+      await this.configService.changeDescription(localStorage.getItem("usuario"), newValue)
         .then(() =>
           this.toastr.success("Cambiado", "La descripcion se cambió correctamente")
 

@@ -80,29 +80,29 @@ export class EscribirTweetComponent implements OnInit, OnDestroy {
     this._tweet.foto = this.currentFile ? this.currentFile.name : ""
     this._tweet.usuario = localStorage.getItem("usuario")
 
-    this._postTweetSubscriber = await this.tweetsService
+    await lastValueFrom(this.tweetsService
       .postTweet(this._tweet)
-      .subscribe({
-        next: async (tweet: Tweet) => {
-          this._tweet = tweet
-          console.log("entra aqui1")
-          console.log(this._tweet)
+    ).then(async (tweet: Tweet) => {
+      this._tweet = tweet
+      console.log("entra aqui1")
+      console.log(this._tweet)
 
-          if (this._tweet.foto) {
-            console.log("entra aqui2")
-            lastValueFrom(this.tweetsService.postImagenEnTweet(this.currentFile,
-              `${tweet._id}_${this.currentFile?.name?.replace(new RegExp(' ', 'g'), '_',)}`))
-              .then((e) => {
-                console.log("guardada: " + e)
-              })
-          }
+      if (this._tweet.foto) {
+        console.log("entra aqui2")
+        await lastValueFrom(this.tweetsService.postImagenEnTweet(this.currentFile,
+          `${tweet._id}_${this.currentFile?.name?.replace(new RegExp(' ', 'g'), '_',)}`))
+          .then((e) => {
+            console.log("guardada: " + e)
+          })
+        console.log("entra aqui 3")
+      }
+      console.log("entra aqui 4")
 
-        }, complete: async () => {
-          this.datosService.tweetsCargados.unshift(this._tweet)
-          this.datosService.hayTweets = true
-          this.datosService.fechaPosterior = this._tweet.fecha
-          await this.dialogRef.close("enviado")
-        }
-      })
+      this.datosService.tweetsCargados.unshift(this._tweet)
+      this.datosService.hayTweets = true
+      this.datosService.fechaPosterior = this._tweet.fecha
+      await this.dialogRef.close("enviado")
+
+    })
   }
 }

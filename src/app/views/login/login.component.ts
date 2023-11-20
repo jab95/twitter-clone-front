@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   openDialog(): void {
 
-    const dialogRef = this.dialog.open(RegistroComponent, { disableClose: true });
+    const dialogRef = this.dialog.open(RegistroComponent, { panelClass: 'register-dialog', disableClose: true });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
