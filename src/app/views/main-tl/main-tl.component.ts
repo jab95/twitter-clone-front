@@ -59,7 +59,7 @@ export class MainTlComponent implements OnInit, OnDestroy {
 
     this._intervalSubscription = interval(7000)
       .pipe(takeUntil(this._destroyed$))
-      .subscribe(() => this.cargarTweetsPosteriores());
+      .subscribe(async () => await this.cargarTweetsPosteriores());
 
     this._loadingSubscription$ = this.loadingService.loadingSub$.subscribe({
       next: (loading) => {
@@ -185,57 +185,53 @@ export class MainTlComponent implements OnInit, OnDestroy {
     })
   }
 
-  cargarTweetsPosteriores(intervalo: boolean = true): void {
+  async cargarTweetsPosteriores(intervalo: boolean = true): Promise<void> {
 
     console.log("ha entradito")
 
-    this._tweetsAfterSubscribe = this.tweetsService.getTweetsAfterDate(this.datosService.contadorCargaTweets, this.datosService.fechaPosterior)
-      .subscribe({
-        next: (tweets: any) => {
+    await lastValueFrom(this.tweetsService.getTweetsAfterDate(this.datosService.contadorCargaTweets, this.datosService.fechaPosterior))
+      .then((tweets: any) => {
 
-          if (tweets.length) {
-            console.log("quedan por ver")
-            this.datosService.hayTweetsPorVerMain = true
-          }
+        if (tweets.length) {
+          console.log("quedan por ver")
+          this.datosService.hayTweetsPorVerMain = true
+        }
 
-          if (!intervalo && this.datosService.hayTweetsPorVerMain) {
+        if (!intervalo && this.datosService.hayTweetsPorVerMain) {
 
-            this.datosService.tweetsCargados = this.datosService.tweetsCargados.concat(tweets)
-            this.datosService.tweetsCargados = _.uniqWith(this.datosService.tweetsCargados, _.isEqual)
-            this.datosService.tweetsCargados = _.orderBy(this.datosService.tweetsCargados, ["fecha"], ["desc"])
-
-          }
-
-
-          for (const tweet of tweets) {
-
-            if (this.datosService.tweetsCargados.includes(tweet)) {
-              this.datosService.hayTweetsPorVerMain = false
-              break;
-            }
-          }
-
-          if (tweets.totalDocs == 0) {
-            this.datosService.hayTweets = false
-            this.datosService.tweetsCargados = []
-            this.datosService.contadorCargaTweets = 1
-          }
-
-        }, complete: () => {
-
-          const posteriores = this.datosService.tweetsCargados.filter(
-            (tweet) => tweet.fecha > this.datosService.fechaPosterior
-          );
-
-          if (posteriores && (posteriores.length % 4 === 0)) {
-
-            this.datosService.contadorCargaTweets++
-          }
-
-          this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados)?.fecha ?? undefined
-
+          this.datosService.tweetsCargados = this.datosService.tweetsCargados.concat(tweets)
+          this.datosService.tweetsCargados = _.uniqWith(this.datosService.tweetsCargados, _.isEqual)
+          this.datosService.tweetsCargados = _.orderBy(this.datosService.tweetsCargados, ["fecha"], ["desc"])
 
         }
+
+
+        for (const tweet of tweets) {
+
+          if (this.datosService.tweetsCargados.includes(tweet)) {
+            this.datosService.hayTweetsPorVerMain = false
+            break;
+          }
+        }
+
+        if (tweets.totalDocs == 0) {
+          this.datosService.hayTweets = false
+          this.datosService.tweetsCargados = []
+          this.datosService.contadorCargaTweets = 1
+        }
+
+        const posteriores = this.datosService.tweetsCargados.filter(
+          (tweet) => tweet.fecha > this.datosService.fechaPosterior
+        );
+
+        if (posteriores && (posteriores.length % 4 === 0)) {
+
+          this.datosService.contadorCargaTweets++
+        }
+
+        this.datosService.fechaPosterior = _.first(this.datosService.tweetsCargados)?.fecha ?? undefined
+
+
       })
   }
 
