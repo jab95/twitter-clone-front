@@ -101,7 +101,7 @@ export class EscribirTweetComponent implements OnInit, OnDestroy {
       this.datosService.tweetsCargados.unshift(this._tweet)
       this.datosService.hayTweets = true
       this.datosService.fechaPosterior = this._tweet.fecha
-      this.datosService.escribiendoTweet = true
+      this.datosService.escribiendoTweet = false
       await this.dialogRef.close("enviado")
 
     }).catch((err) => {
