@@ -25,6 +25,7 @@ export class DatosService {
   usuarioActual: Usuario = new Usuario();
 
   currentUserSubject: BehaviorSubject<Usuario> = new BehaviorSubject({} as Usuario);
+  escribiendoTweet: boolean = false;
 
 
   constructor() {

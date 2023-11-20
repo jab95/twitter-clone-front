@@ -57,9 +57,12 @@ export class MainTlComponent implements OnInit, OnDestroy {
       this.router.navigate(["/login"])
     }
 
-    this._intervalSubscription = interval(7000)
+    this._intervalSubscription = interval(10000)
       .pipe(takeUntil(this._destroyed$))
-      .subscribe(async () => await this.cargarTweetsPosteriores());
+      .subscribe(async () => {
+        if (!this.datosService.escribiendoTweet)
+          await this.cargarTweetsPosteriores()
+      });
 
     this._loadingSubscription$ = this.loadingService.loadingSub$.subscribe({
       next: (loading) => {
@@ -118,7 +121,6 @@ export class MainTlComponent implements OnInit, OnDestroy {
 
     if (_.isEqual(currentLocation, "main") || _.isEmpty(this.datosService.tweetsCargados)) {
 
-      console.log("ha entradito")
 
       this.loading = true
       const tweets = await lastValueFrom(this.tweetsService.getTwets(this.datosService.contadorCargaTweets)
@@ -187,13 +189,11 @@ export class MainTlComponent implements OnInit, OnDestroy {
 
   async cargarTweetsPosteriores(intervalo: boolean = true): Promise<void> {
 
-    console.log("ha entradito")
-
+    this.datosService.hayTweetsPorVerMain = false
     await lastValueFrom(this.tweetsService.getTweetsAfterDate(this.datosService.contadorCargaTweets, this.datosService.fechaPosterior))
       .then((tweets: any) => {
 
         if (tweets.length) {
-          console.log("quedan por ver")
           this.datosService.hayTweetsPorVerMain = true
         }
 

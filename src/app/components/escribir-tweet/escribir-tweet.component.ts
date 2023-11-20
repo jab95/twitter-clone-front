@@ -79,7 +79,7 @@ export class EscribirTweetComponent implements OnInit, OnDestroy {
     this._tweet.texto = this._textoTeet.nativeElement.value
     this._tweet.foto = this.currentFile ? this.currentFile.name : ""
     this._tweet.usuario = localStorage.getItem("usuario")
-
+    this.datosService.escribiendoTweet = true
     await lastValueFrom(this.tweetsService
       .postTweet(this._tweet)
     ).then(async (tweet: Tweet) => {
@@ -101,7 +101,11 @@ export class EscribirTweetComponent implements OnInit, OnDestroy {
       this.datosService.tweetsCargados.unshift(this._tweet)
       this.datosService.hayTweets = true
       this.datosService.fechaPosterior = this._tweet.fecha
+      this.datosService.escribiendoTweet = true
       await this.dialogRef.close("enviado")
+
+    }).catch((err) => {
+      this.datosService.escribiendoTweet = false
 
     })
   }
